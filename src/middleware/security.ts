@@ -5,6 +5,20 @@ import cors from 'cors';
 import hpp from 'hpp';
 import { expressCspHeader, INLINE, NONE, SELF } from 'express-csp-header';
 import sanitize from 'express-mongo-sanitize';
+import jwt from 'jsonwebtoken';
+
+// Extend Request type to include user
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        id: string;
+        email: string;
+        role: string;
+      };
+    }
+  }
+}
 
 // Rate limiting configuratie
 export const rateLimiter = rateLimit({

@@ -1,13 +1,14 @@
 import Redis from 'ioredis';
 import { logger } from './logger';
+import { config } from '../config';
 
-// Redis client configuratie
 const redis = new Redis({
-  host: process.env.REDIS_HOST || 'localhost',
-  port: parseInt(process.env.REDIS_PORT || '6379'),
-  password: process.env.REDIS_PASSWORD,
+  host: config.redis.host,
+  port: config.redis.port,
+  password: config.redis.password,
   retryStrategy: (times) => {
     const delay = Math.min(times * 50, 2000);
+    logger.info(`Retrying Redis connection in ${delay}ms`);
     return delay;
   },
 });
@@ -19,6 +20,16 @@ redis.on('error', (error) => {
 
 redis.on('connect', () => {
   logger.info('Successfully connected to Redis');
+});
+
+redis.on('close', () => {
+  logger.warn('Redis connection closed');
+});
+
+// Graceful shutdown
+process.on('beforeExit', async () => {
+  await redis.quit();
+  logger.info('Disconnected from Redis');
 });
 
 // Cache wrapper voor async functies

@@ -1,189 +1,120 @@
-import Queue from 'bull';
-import { logger } from './logger';
-import { redis } from './redis';
+import Bull from 'bull';
+import { Logger } from './logger';
+import redis from './redis';
+import { config } from '../config';
 
-// Queue configuratie voor verschillende job types
-export const Queues = {
-  // SEO gerelateerde taken
-  seoAudit: new Queue('seo-audit', {
-    redis: {
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379'),
-      password: process.env.REDIS_PASSWORD,
-    },
-    defaultJobOptions: {
-      attempts: 3,
-      backoff: {
-        type: 'exponential',
-        delay: 1000,
-      },
-      removeOnComplete: true,
-    },
-  }),
+const logger = new Logger('Queue');
 
-  // Content generatie taken
-  contentGeneration: new Queue('content-generation', {
-    redis: {
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379'),
-      password: process.env.REDIS_PASSWORD,
-    },
-    defaultJobOptions: {
-      attempts: 2,
-      timeout: 300000, // 5 minuten timeout
-      removeOnComplete: true,
-    },
-  }),
+// Queue interface
+interface QueueConfig {
+  name: string;
+  concurrency?: number;
+  attempts?: number;
+  backoff?: {
+    type: string;
+    delay: number;
+  };
+}
 
-  // Analytics taken
-  analytics: new Queue('analytics', {
-    redis: {
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379'),
-      password: process.env.REDIS_PASSWORD,
-    },
-    defaultJobOptions: {
-      attempts: 3,
-      removeOnComplete: 100, // Bewaar laatste 100 completed jobs
-    },
-  }),
+// Queue factory
+export class QueueFactory {
+  private static queues: Map<string, Bull.Queue> = new Map();
 
-  // Email notificaties
-  emailNotification: new Queue('email-notification', {
-    redis: {
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379'),
-      password: process.env.REDIS_PASSWORD,
-    },
-    defaultJobOptions: {
-      attempts: 3,
-      backoff: {
-        type: 'fixed',
-        delay: 5000,
-      },
-      removeOnComplete: true,
-    },
-  }),
-};
-
-// Error handling voor alle queues
-Object.values(Queues).forEach(queue => {
-  queue.on('error', error => {
-    logger.error(`Queue error in ${queue.name}:`, error);
-  });
-
-  queue.on('failed', (job, error) => {
-    logger.error(`Job failed in ${queue.name}:`, {
-      jobId: job.id,
-      error: error.message,
-    });
-  });
-
-  queue.on('completed', job => {
-    logger.info(`Job completed in ${queue.name}:`, {
-      jobId: job.id,
-    });
-  });
-});
-
-// Helper functies voor job management
-export const addJob = async (
-  queueName: keyof typeof Queues,
-  data: any,
-  options?: Queue.JobOptions
-) => {
-  try {
-    const queue = Queues[queueName];
-    const job = await queue.add(data, options);
-    return job;
-  } catch (error) {
-    logger.error(`Error adding job to ${queueName}:`, error);
-    throw error;
-  }
-};
-
-export const getJobStatus = async (
-  queueName: keyof typeof Queues,
-  jobId: string
-) => {
-  try {
-    const queue = Queues[queueName];
-    const job = await queue.getJob(jobId);
-    
-    if (!job) {
-      return { status: 'not_found' };
+  static createQueue(queueConfig: QueueConfig): Bull.Queue {
+    if (this.queues.has(queueConfig.name)) {
+      return this.queues.get(queueConfig.name)!;
     }
-    
-    const state = await job.getState();
-    const progress = await job.progress();
-    
-    return {
-      id: job.id,
-      status: state,
-      progress,
-      data: job.data,
-      returnvalue: job.returnvalue,
-      failedReason: job.failedReason,
-      timestamp: job.timestamp,
-    };
-  } catch (error) {
-    logger.error(`Error getting job status from ${queueName}:`, error);
-    throw error;
+
+    const queue = new Bull(queueConfig.name, {
+      redis: {
+        host: config.redis.host,
+        port: config.redis.port,
+        password: config.redis.password
+      },
+      defaultJobOptions: {
+        attempts: queueConfig.attempts || 3,
+        backoff: queueConfig.backoff || {
+          type: 'exponential',
+          delay: 1000
+        },
+        removeOnComplete: true,
+        removeOnFail: false
+      }
+    });
+
+    // Event handlers
+    queue.on('completed', (job) => {
+      logger.info(`Job ${job.id} completed in queue ${queueConfig.name}`);
+    });
+
+    queue.on('failed', (job, err) => {
+      logger.error(`Job ${job?.id} failed in queue ${queueConfig.name}:`, err);
+    });
+
+    queue.on('error', (error) => {
+      logger.error(`Queue ${queueConfig.name} error:`, error);
+    });
+
+    queue.on('stalled', (job) => {
+      logger.warn(`Job ${job.id} stalled in queue ${queueConfig.name}`);
+    });
+
+    // Set concurrency
+    if (queueConfig.concurrency) {
+      queue.process(queueConfig.concurrency, async (job) => {
+        try {
+          logger.info(`Processing job ${job.id} in queue ${queueConfig.name}`);
+          return await job.data.handler(job.data);
+        } catch (error) {
+          logger.error(`Error processing job ${job.id}:`, error);
+          throw error;
+        }
+      });
+    }
+
+    this.queues.set(queueConfig.name, queue);
+    return queue;
   }
-};
 
-// Recurring jobs setup
-export const setupRecurringJobs = async () => {
-  try {
-    // Dagelijkse SEO audit voor alle websites
-    await Queues.seoAudit.add(
-      'daily-audit',
-      {},
-      {
-        repeat: {
-          cron: '0 0 * * *', // Elke dag om middernacht
-        },
-      }
-    );
-
-    // Hourly analytics update
-    await Queues.analytics.add(
-      'hourly-update',
-      {},
-      {
-        repeat: {
-          cron: '0 * * * *', // Elk uur
-        },
-      }
-    );
-
-    // Weekly competitor analysis
-    await Queues.analytics.add(
-      'competitor-analysis',
-      {},
-      {
-        repeat: {
-          cron: '0 0 * * 0', // Elke zondag
-        },
-      }
-    );
-
-    logger.info('Recurring jobs setup completed');
-  } catch (error) {
-    logger.error('Error setting up recurring jobs:', error);
-    throw error;
+  static async closeAll(): Promise<void> {
+    const closePromises = Array.from(this.queues.values()).map(queue => queue.close());
+    await Promise.all(closePromises);
+    logger.info('All queues closed');
   }
-};
+}
 
 // Graceful shutdown
-export const closeQueues = async () => {
-  try {
-    await Promise.all(
-      Object.values(Queues).map(queue => queue.close())
-    );
-    logger.info('All queues closed successfully');
-  } catch (error) {
-    logger.error('Error closing queues:', error);
-    throw error;
+process.on('beforeExit', async () => {
+  await QueueFactory.closeAll();
+});
+
+// Pre-defined queues
+export const contentQueue = QueueFactory.createQueue({
+  name: 'content-generation',
+  concurrency: 2,
+  attempts: 3,
+  backoff: {
+    type: 'exponential',
+    delay: 1000
   }
-};
+});
+
+export const seoQueue = QueueFactory.createQueue({
+  name: 'seo-tasks',
+  concurrency: 3,
+  attempts: 2,
+  backoff: {
+    type: 'fixed',
+    delay: 5000
+  }
+});
+
+export const analyticsQueue = QueueFactory.createQueue({
+  name: 'analytics-processing',
+  concurrency: 1,
+  attempts: 5,
+  backoff: {
+    type: 'exponential',
+    delay: 2000
+  }
+});

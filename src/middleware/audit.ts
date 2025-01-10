@@ -13,32 +13,62 @@ const logger = createLogger({
   ]
 });
 
+// Extend Request type to include user
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        id: string;
+        email: string;
+        role: string;
+      };
+    }
+  }
+}
+
+interface AuditLog {
+  timestamp: Date;
+  userId?: string;
+  action: string;
+  resource: string;
+  status: number;
+  ip: string;
+  userAgent: string;
+}
+
 // Audit logging middleware
 export const auditMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  // Request timestamp
-  const startTime = Date.now();
-  
-  // Log bij response
-  res.on('finish', () => {
-    const duration = Date.now() - startTime;
-    
-    logger.info('API Request', {
-      timestamp: new Date().toISOString(),
-      method: req.method,
-      url: req.originalUrl,
-      status: res.statusCode,
-      duration,
-      ip: req.ip,
-      userAgent: req.get('user-agent'),
+  // Capture original end function
+  const originalEnd = res.end;
+  const chunks: Buffer[] = [];
+
+  // Override end function
+  res.end = function(chunk: any) {
+    if (chunk) {
+      chunks.push(Buffer.from(chunk));
+    }
+
+    const auditLog: AuditLog = {
+      timestamp: new Date(),
       userId: req.user?.id,
-      requestId: req.headers['x-request-id'],
-    });
-  });
-  
+      action: req.method,
+      resource: req.originalUrl,
+      status: res.statusCode,
+      ip: req.ip,
+      userAgent: req.get('user-agent') || 'unknown'
+    };
+
+    // Log audit entry
+    logger.info('API Request', auditLog);
+
+    // Restore original end
+    originalEnd.apply(res, arguments);
+  };
+
   next();
 };
 

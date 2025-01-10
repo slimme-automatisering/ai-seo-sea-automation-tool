@@ -1,133 +1,133 @@
-import client from 'prom-client';
-import { logger } from './logger';
+import { Counter, Gauge, Histogram } from 'prom-client';
+import { Logger } from './logger';
 
-// Creëer een Registry
-const register = new client.Registry();
+const logger = new Logger('Metrics');
 
-// Voeg default metrics toe (CPU, memory, etc.)
-client.collectDefaultMetrics({
-  register,
-  prefix: 'app_',
-});
+// Application metrics
+export const metrics = {
+  // HTTP metrics
+  httpRequestDuration: new Histogram({
+    name: 'http_request_duration_seconds',
+    help: 'Duration of HTTP requests in seconds',
+    labelNames: ['method', 'route', 'status_code'],
+    buckets: [0.1, 0.5, 1, 2, 5]
+  }),
 
-// HTTP request metrics
-export const httpRequestDuration = new client.Histogram({
-  name: 'http_request_duration_seconds',
-  help: 'Duration of HTTP requests in seconds',
-  labelNames: ['method', 'route', 'status_code'],
-  buckets: [0.1, 0.3, 0.5, 0.7, 1, 3, 5, 7, 10],
-});
-register.registerMetric(httpRequestDuration);
+  httpRequestTotal: new Counter({
+    name: 'http_requests_total',
+    help: 'Total number of HTTP requests',
+    labelNames: ['method', 'route', 'status_code']
+  }),
 
-// HTTP request counter
-export const httpRequestsTotal = new client.Counter({
-  name: 'http_requests_total',
-  help: 'Total number of HTTP requests',
-  labelNames: ['method', 'route', 'status'],
-});
-register.registerMetric(httpRequestsTotal);
+  // Job metrics
+  jobDuration: new Histogram({
+    name: 'job_duration_seconds',
+    help: 'Duration of background jobs in seconds',
+    labelNames: ['queue', 'job_type'],
+    buckets: [1, 5, 15, 30, 60, 120]
+  }),
 
-// Database query metrics
-export const dbQueryDuration = new client.Histogram({
-  name: 'db_query_duration_seconds',
-  help: 'Duration of database queries in seconds',
-  labelNames: ['operation', 'table'],
-  buckets: [0.01, 0.05, 0.1, 0.5, 1, 2, 5],
-});
-register.registerMetric(dbQueryDuration);
+  jobsTotal: new Counter({
+    name: 'jobs_total',
+    help: 'Total number of jobs processed',
+    labelNames: ['queue', 'job_type', 'status']
+  }),
 
-// Redis metrics
-export const redisOperationDuration = new client.Histogram({
-  name: 'redis_operation_duration_seconds',
-  help: 'Duration of Redis operations in seconds',
-  labelNames: ['operation'],
-  buckets: [0.001, 0.005, 0.01, 0.05, 0.1, 0.5],
-});
-register.registerMetric(redisOperationDuration);
+  activeJobs: new Gauge({
+    name: 'active_jobs',
+    help: 'Number of currently active jobs',
+    labelNames: ['queue']
+  }),
 
-// Cache hit ratio
-export const cacheHitRatio = new client.Gauge({
-  name: 'cache_hit_ratio',
-  help: 'Cache hit ratio',
-});
-register.registerMetric(cacheHitRatio);
+  // API metrics
+  apiRequestDuration: new Histogram({
+    name: 'api_request_duration_seconds',
+    help: 'Duration of external API requests in seconds',
+    labelNames: ['api', 'endpoint'],
+    buckets: [0.1, 0.5, 1, 2, 5, 10]
+  }),
 
-// Job queue metrics
-export const bullQueueSize = new client.Gauge({
-  name: 'bull_queue_size',
-  help: 'Current size of Bull queues',
-  labelNames: ['queue'],
-});
-register.registerMetric(bullQueueSize);
+  apiRequestsTotal: new Counter({
+    name: 'api_requests_total',
+    help: 'Total number of external API requests',
+    labelNames: ['api', 'endpoint', 'status']
+  }),
 
-export const bullJobsCompleted = new client.Counter({
-  name: 'bull_jobs_completed_total',
-  help: 'Total number of completed Bull jobs',
-  labelNames: ['queue'],
-});
-register.registerMetric(bullJobsCompleted);
+  // Resource metrics
+  memoryUsage: new Gauge({
+    name: 'memory_usage_bytes',
+    help: 'Process memory usage in bytes'
+  }),
 
-export const bullJobsFailed = new client.Counter({
-  name: 'bull_jobs_failed_total',
-  help: 'Total number of failed Bull jobs',
-  labelNames: ['queue'],
-});
-register.registerMetric(bullJobsFailed);
+  cpuUsage: new Gauge({
+    name: 'cpu_usage_percent',
+    help: 'Process CPU usage percentage'
+  }),
 
-// Business metrics
-export const activeUsers = new client.Gauge({
-  name: 'active_users',
-  help: 'Number of active users in the last 5 minutes',
-});
-register.registerMetric(activeUsers);
+  // Business metrics
+  activeUsers: new Gauge({
+    name: 'active_users',
+    help: 'Number of currently active users'
+  }),
 
-export const seoAuditScore = new client.Histogram({
-  name: 'seo_audit_score',
-  help: 'Distribution of SEO audit scores',
-  buckets: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
-});
-register.registerMetric(seoAuditScore);
+  contentGenerationRequests: new Counter({
+    name: 'content_generation_requests_total',
+    help: 'Total number of content generation requests',
+    labelNames: ['content_type', 'status']
+  }),
 
-export const contentGenerationDuration = new client.Histogram({
-  name: 'content_generation_duration_seconds',
-  help: 'Duration of content generation in seconds',
-  labelNames: ['type'],
-  buckets: [1, 5, 10, 30, 60, 120, 300],
-});
-register.registerMetric(contentGenerationDuration);
-
-// Helper functies
-export const trackHttpRequest = (method: string, route: string, statusCode: number, duration: number) => {
-  httpRequestDuration.labels(method, route, statusCode.toString()).observe(duration);
-  httpRequestsTotal.labels(method, route, statusCode.toString()).inc();
+  seoAuditRequests: new Counter({
+    name: 'seo_audit_requests_total',
+    help: 'Total number of SEO audit requests',
+    labelNames: ['audit_type', 'status']
+  })
 };
 
-export const trackDbQuery = (operation: string, table: string, duration: number) => {
-  dbQueryDuration.labels(operation, table).observe(duration);
-};
-
-export const trackRedisOperation = (operation: string, duration: number) => {
-  redisOperationDuration.labels(operation).observe(duration);
-};
-
-export const updateQueueMetrics = (queueName: string, size: number) => {
-  bullQueueSize.labels(queueName).set(size);
-};
-
-export const trackJobCompletion = (queueName: string, success: boolean) => {
-  if (success) {
-    bullJobsCompleted.labels(queueName).inc();
-  } else {
-    bullJobsFailed.labels(queueName).inc();
-  }
-};
-
-// Metrics endpoint handler
-export const getMetrics = async () => {
+// Update system metrics periodically
+const updateSystemMetrics = () => {
   try {
-    return await register.metrics();
+    const memUsage = process.memoryUsage();
+    metrics.memoryUsage.set(memUsage.heapUsed);
+
+    const startUsage = process.cpuUsage();
+    setTimeout(() => {
+      const endUsage = process.cpuUsage(startUsage);
+      const totalUsage = (endUsage.user + endUsage.system) / 1000000; // Convert to seconds
+      metrics.cpuUsage.set(totalUsage * 100);
+    }, 100);
   } catch (error) {
-    logger.error('Error collecting metrics:', error);
-    throw error;
+    logger.error('Error updating system metrics:', error);
   }
 };
+
+// Update system metrics every 15 seconds
+setInterval(updateSystemMetrics, 15000);
+
+// Middleware for HTTP metrics
+export const metricsMiddleware = (req: any, res: any, next: any) => {
+  const start = process.hrtime();
+
+  res.on('finish', () => {
+    const duration = process.hrtime(start);
+    const durationSeconds = duration[0] + duration[1] / 1e9;
+
+    metrics.httpRequestDuration.observe(
+      {
+        method: req.method,
+        route: req.route?.path || 'unknown',
+        status_code: res.statusCode
+      },
+      durationSeconds
+    );
+
+    metrics.httpRequestTotal.inc({
+      method: req.method,
+      route: req.route?.path || 'unknown',
+      status_code: res.statusCode
+    });
+  });
+
+  next();
+};
+
+export default metrics;

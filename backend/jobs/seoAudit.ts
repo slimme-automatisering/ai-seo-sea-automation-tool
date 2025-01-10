@@ -1,73 +1,83 @@
 import { Job } from 'bull';
-import { prisma } from '../utils/prisma';
-import { logger } from '../utils/logger';
-import { Queues } from '../utils/queue';
-import { runSeoAudit } from '../services/seoService';
-import { sendNotification } from '../services/notificationService';
+import prisma from '../utils/prisma';
+import { Logger } from '../utils/logger';
+import { seoQueue } from '../utils/queue';
+import { seoService, SEOAuditRequest } from '../services/seoService';
+import { notificationService } from '../services/notificationService';
 
-// Process SEO audit jobs
-Queues.seoAudit.process(async (job: Job) => {
-  const { websiteId } = job.data;
-  
+const logger = new Logger('SEOAuditJob');
+
+interface SEOAuditJobData {
+  userId: string;
+  requestId: string;
+  url: string;
+  depth?: number;
+  checkLinks?: boolean;
+  checkImages?: boolean;
+}
+
+export const processSEOAudit = async (job: Job<SEOAuditJobData>) => {
   try {
-    logger.info(`Starting SEO audit for website ${websiteId}`);
-    
-    // Update job progress
-    await job.progress(10);
-    
-    // Haal website data op
-    const website = await prisma.website.findUnique({
-      where: { id: websiteId },
-      include: {
-        contentItems: true,
-        keywords: true,
-      },
+    logger.info('Processing SEO audit job', { jobId: job.id });
+
+    const { userId, requestId, ...auditRequest } = job.data;
+
+    // Perform SEO audit
+    const auditResult = await seoService.performAudit({
+      userId,
+      ...auditRequest
     });
-    
-    if (!website) {
-      throw new Error(`Website ${websiteId} not found`);
-    }
-    
-    await job.progress(20);
-    
-    // Voer SEO audit uit
-    const auditResult = await runSeoAudit(website);
-    
-    await job.progress(80);
-    
-    // Sla resultaten op
-    const seoAudit = await prisma.seoAudit.create({
+
+    // Store the results
+    await prisma.seoAuditResult.create({
       data: {
-        websiteId,
+        requestId,
+        userId,
+        auditId: auditResult.id,
+        status: 'completed',
         score: auditResult.score,
-        issues: auditResult.issues,
-        recommendations: auditResult.recommendations,
-        metrics: auditResult.metrics,
-      },
+        findings: auditResult.findings
+      }
     });
-    
-    await job.progress(90);
-    
-    // Stuur notificatie als er kritieke issues zijn
-    if (auditResult.criticalIssues > 0) {
-      await sendNotification({
-        type: 'SEO_AUDIT_CRITICAL',
-        userId: website.userId,
-        data: {
-          websiteUrl: website.url,
-          criticalIssues: auditResult.criticalIssues,
-          auditId: seoAudit.id,
-        },
-      });
-    }
-    
-    await job.progress(100);
-    
-    logger.info(`SEO audit completed for website ${websiteId}`);
-    
-    return seoAudit;
+
+    // Notify user
+    await notificationService.createNotification(
+      userId,
+      'seo_audit_complete',
+      'SEO Audit Complete',
+      `SEO audit for ${auditRequest.url} has been completed with a score of ${auditResult.score}`,
+      {
+        auditId: auditResult.id,
+        score: auditResult.score,
+        findingsCount: auditResult.findings.length
+      }
+    );
+
+    logger.info('SEO audit job completed', { jobId: job.id });
+    return { success: true, auditId: auditResult.id };
   } catch (error) {
-    logger.error(`Error in SEO audit job for website ${websiteId}:`, error);
+    logger.error('Error processing SEO audit job:', error);
+    
+    // Update status to failed
+    await prisma.seoAuditResult.update({
+      where: { requestId: job.data.requestId },
+      data: { status: 'failed', error: error.message }
+    });
+
+    // Notify user of failure
+    await notificationService.createNotification(
+      job.data.userId,
+      'seo_audit_failed',
+      'SEO Audit Failed',
+      `There was an error performing the SEO audit for ${job.data.url}`,
+      { error: error.message }
+    );
+
     throw error;
   }
+};
+
+// Set up job processor
+seoQueue.process(async (job: Job<SEOAuditJobData>) => {
+  return processSEOAudit(job);
 });

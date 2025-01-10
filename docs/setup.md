@@ -122,6 +122,31 @@ SMTP_PASS=
 - Disaster recovery planning
 - Security training materials
 
+## Code Quality & Analysis
+
+### SonarCloud Configuratie
+De applicatie maakt gebruik van SonarCloud voor continue code quality analyse. Om dit correct te laten werken:
+
+1. Zorg dat je toegang hebt tot het SonarCloud project
+2. Configureer de volgende GitHub Secrets:
+   - `SONAR_TOKEN`: Je SonarCloud token
+3. De analyse wordt automatisch uitgevoerd bij:
+   - Pushes naar main branch
+   - Pull requests
+
+### Quality Gates
+De volgende quality gates zijn geconfigureerd:
+- Code coverage: minimaal 80%
+- Duplicated lines: maximaal 3%
+- Technical debt ratio: maximaal 5%
+- Geen blocker of critical issues
+
+### Lokale Ontwikkeling
+Voor lokale code quality checks:
+1. Installeer SonarLint in je IDE
+2. Run `npm run test:coverage` voor coverage reports
+3. Gebruik pre-commit hooks voor automatische checks
+
 ## Lokale Ontwikkelomgeving
 
 ### 1. Repository Klonen

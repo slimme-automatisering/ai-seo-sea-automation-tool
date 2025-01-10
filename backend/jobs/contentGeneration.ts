@@ -1,86 +1,90 @@
 import { Job } from 'bull';
-import { prisma } from '../utils/prisma';
-import { logger } from '../utils/logger';
-import { Queues } from '../utils/queue';
-import { generateContent } from '../services/contentService';
-import { optimizeContent } from '../services/seoService';
-import { sendNotification } from '../services/notificationService';
+import prisma from '../utils/prisma';
+import { Logger } from '../utils/logger';
+import { contentQueue } from '../utils/queue';
+import { contentService, ContentGenerationRequest } from '../services/contentService';
+import { seoService } from '../services/seoService';
+import { notificationService } from '../services/notificationService';
 
-// Process content generation jobs
-Queues.contentGeneration.process(async (job: Job) => {
-  const { websiteId, contentType, keywords, tone, length } = job.data;
-  
+const logger = new Logger('ContentGenerationJob');
+
+interface ContentJobData {
+  userId: string;
+  requestId: string;
+  type: string;
+  keywords: string[];
+  targetLength?: number;
+  tone?: string;
+}
+
+export const processContentGeneration = async (job: Job<ContentJobData>) => {
   try {
-    logger.info(`Starting content generation for website ${websiteId}`);
-    
-    // Update job progress
-    await job.progress(10);
-    
-    // Haal website data op
-    const website = await prisma.website.findUnique({
-      where: { id: websiteId },
-      include: {
-        keywords: true,
-      },
+    logger.info('Processing content generation job', { jobId: job.id });
+
+    const { userId, requestId, ...contentRequest } = job.data;
+
+    // Generate content
+    const generatedContent = await contentService.generateContent({
+      userId,
+      ...contentRequest
     });
-    
-    if (!website) {
-      throw new Error(`Website ${websiteId} not found`);
-    }
-    
-    await job.progress(20);
-    
-    // Genereer content
-    const generatedContent = await generateContent({
-      type: contentType,
-      keywords,
-      tone,
-      length,
-      websiteContext: website.url,
+
+    // Perform SEO analysis on generated content
+    const seoAudit = await seoService.performAudit({
+      userId,
+      url: 'content://' + generatedContent.id,
+      checkLinks: true,
+      checkImages: true
     });
-    
-    await job.progress(60);
-    
-    // Optimaliseer content voor SEO
-    const optimizedContent = await optimizeContent(generatedContent, keywords);
-    
-    await job.progress(80);
-    
-    // Sla content op
-    const contentItem = await prisma.contentItem.create({
+
+    // Store the results
+    await prisma.contentGenerationResult.create({
       data: {
-        websiteId,
-        type: contentType,
-        title: optimizedContent.title,
-        content: optimizedContent.content,
-        metaTitle: optimizedContent.metaTitle,
-        metaDescription: optimizedContent.metaDescription,
-        keywords,
-        url: optimizedContent.suggestedUrl,
-        aiGenerated: true,
-      },
+        requestId,
+        userId,
+        contentId: generatedContent.id,
+        seoAuditId: seoAudit.id,
+        status: 'completed'
+      }
     });
-    
-    await job.progress(90);
-    
-    // Stuur notificatie
-    await sendNotification({
-      type: 'CONTENT_GENERATED',
-      userId: website.userId,
-      data: {
-        websiteUrl: website.url,
-        contentId: contentItem.id,
-        contentType,
-      },
-    });
-    
-    await job.progress(100);
-    
-    logger.info(`Content generation completed for website ${websiteId}`);
-    
-    return contentItem;
+
+    // Notify user
+    await notificationService.createNotification(
+      userId,
+      'content_generation_complete',
+      'Content Generation Complete',
+      'Your content has been generated and analyzed.',
+      {
+        contentId: generatedContent.id,
+        seoAuditId: seoAudit.id
+      }
+    );
+
+    logger.info('Content generation job completed', { jobId: job.id });
+    return { success: true, contentId: generatedContent.id, seoAuditId: seoAudit.id };
   } catch (error) {
-    logger.error(`Error in content generation job for website ${websiteId}:`, error);
+    logger.error('Error processing content generation job:', error);
+    
+    // Update status to failed
+    await prisma.contentGenerationResult.update({
+      where: { requestId: job.data.requestId },
+      data: { status: 'failed', error: error.message }
+    });
+
+    // Notify user of failure
+    await notificationService.createNotification(
+      job.data.userId,
+      'content_generation_failed',
+      'Content Generation Failed',
+      'There was an error generating your content.',
+      { error: error.message }
+    );
+
     throw error;
   }
+};
+
+// Set up job processor
+contentQueue.process(async (job: Job<ContentJobData>) => {
+  return processContentGeneration(job);
 });

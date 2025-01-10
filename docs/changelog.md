@@ -117,6 +117,14 @@
   - Evaluatie formulieren
   - Certificatie criteria
   - Follow-up planning
+- SonarCloud integratie toegevoegd
+  - Nieuwe build.yml workflow voor SonarQube analyse
+  - Geconfigureerde sonar-project.properties
+  - Project key en organization settings bijgewerkt
+- Verbeterde code quality monitoring
+  - Automatische code analyse bij elke push en PR
+  - Quality Gates configuratie
+  - Code coverage tracking
 
 ### Changed
 - Gereorganiseerde todo lijst met nieuwe fases:
