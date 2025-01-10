@@ -138,6 +138,12 @@
 - Verbeterde error handling in controllers
 - Geoptimaliseerde rate limiting configuratie
 - Uitgebreide logging implementatie
+- Verbeterde CI/CD configuratie:
+  - Quality workflow geoptimaliseerd
+  - Dubbele test coverage rapportage toegevoegd
+  - Codecov configuratie bijgewerkt met repository slug
+  - Code formatting verbeterd in workflow files
+  - Codecov Action upgrade naar v5
 
 ### Security
 - Toegevoegde beveiligingsconfiguratie voor:
