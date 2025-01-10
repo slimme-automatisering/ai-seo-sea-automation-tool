@@ -144,6 +144,11 @@
   - Codecov configuratie bijgewerkt met repository slug
   - Code formatting verbeterd in workflow files
   - Codecov Action upgrade naar v5
+- Dependencies geüpgraded:
+  - Next.js bijgewerkt naar versie 14.2.21
+  - Verbeterde security en performance
+  - Nieuwe features van Next.js 14.2.x
+  - Breaking changes gecontroleerd en gevalideerd
 
 ### Security
 - Toegevoegde beveiligingsconfiguratie voor:
