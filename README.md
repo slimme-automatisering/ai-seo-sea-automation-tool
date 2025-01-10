@@ -17,6 +17,7 @@ This project is a progressive web app (PWA) designed to automate and optimize SE
 - [State Management Documentation](docs/state-management.md)
 - [Performance Optimization Documentation](docs/performance-optimization.md)
 - [API Documentation](docs/api.md)
+- [File Structure Documentation](docs/file-structure.md)
 
 ## Setup Instructions
 1. Clone the repository.

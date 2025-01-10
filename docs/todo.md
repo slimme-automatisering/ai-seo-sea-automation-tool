@@ -3,10 +3,21 @@
 ## Fase 1: Basis Setup
 - [x] Project structuur opzetten
 - [x] GitHub Actions workflow configureren
-- [ ] Database schema ontwerpen
+- [x] Database schema ontwerpen
+  - [x] Basis modellen (User, Organization, Website)
+  - [x] SEO modellen (SeoAudit, ContentItem)
+  - [x] SEA modellen (Campaign, Ad, Keyword)
+  - [x] Analytics modellen
+  - [x] Competitor analyse modellen
+  - [x] API integratie modellen
 - [ ] Authentication system implementeren
+  - [ ] Basis authenticatie
+  - [ ] 2FA implementatie
 - [ ] Basis API endpoints creëren
+  - [ ] Rate limiting per user
 - [ ] Frontend boilerplate opzetten
+  - [ ] Dark/Light mode toggle
+  - [ ] Customizable dashboard structuur
 
 ## Fase 2: Core Functionaliteiten
 - [ ] Content generatie met AI
@@ -16,7 +27,11 @@
 - [ ] Competitor tracking
 - [ ] Dashboard visualisaties
 
-## Fase 3: Advanced Features
+## Fase 3: Performance & Monitoring
+- [ ] Server-side caching strategie implementeren
+- [ ] CDN setup voor statische assets
+- [ ] Error tracking system opzetten
+- [ ] End-to-end tests toevoegen
 - [ ] Machine learning voor bid optimalisatie
 - [ ] Automated reporting
 - [ ] A/B testing framework

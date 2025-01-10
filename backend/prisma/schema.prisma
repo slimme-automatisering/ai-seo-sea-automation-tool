@@ -10,6 +10,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Basis modellen
 model User {
   id            String    @id @default(cuid())
   email         String    @unique
@@ -21,69 +22,208 @@ model User {
   websites      Website[]
   organization  Organization? @relation(fields: [orgId], references: [id])
   orgId         String?
+  aiCredits     Int       @default(0)
 }
 
 model Organization {
-  id        String    @id @default(cuid())
-  name      String
-  plan      Plan      @default(INDIVIDUAL)
-  users     User[]
-  websites  Website[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id            String    @id @default(cuid())
+  name          String
+  plan          Plan      @default(INDIVIDUAL)
+  users         User[]
+  websites      Website[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  apiKeys       ApiKey[]
 }
 
 model Website {
-  id            String    @id @default(cuid())
-  url           String
-  name          String
-  user          User      @relation(fields: [userId], references: [id])
-  userId        String
-  organization  Organization @relation(fields: [orgId], references: [id])
-  orgId         String
-  campaigns     Campaign[]
-  keywords      Keyword[]
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id              String    @id @default(cuid())
+  url             String
+  name            String
+  user            User      @relation(fields: [userId], references: [id])
+  userId          String
+  organization    Organization @relation(fields: [orgId], references: [id])
+  orgId           String
+  campaigns       Campaign[]
+  keywords        Keyword[]
+  seoAudits       SeoAudit[]
+  contentItems    ContentItem[]
+  competitors     Competitor[]
+  analytics       Analytics[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 }
 
+// SEO modellen
+model SeoAudit {
+  id              String    @id @default(cuid())
+  website         Website   @relation(fields: [websiteId], references: [id])
+  websiteId       String
+  score           Int
+  issues          Json      // Opgeslagen als JSON met gevonden problemen
+  recommendations Json      // Opgeslagen als JSON met aanbevelingen
+  metrics         Json      // PageSpeed scores, mobiele vriendelijkheid, etc.
+  createdAt       DateTime  @default(now())
+}
+
+model ContentItem {
+  id              String    @id @default(cuid())
+  website         Website   @relation(fields: [websiteId], references: [id])
+  websiteId       String
+  type            ContentType
+  title           String
+  content         String    @db.Text
+  metaTitle       String?
+  metaDescription String?
+  keywords        String[]
+  url             String
+  aiGenerated     Boolean   @default(false)
+  qualityScore    Float?    // SEO kwaliteitsscore
+  readabilityScore Float?   // Leesbaarheid score
+  status          ContentStatus @default(DRAFT)
+  publishDate     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+// SEA modellen
 model Campaign {
-  id          String    @id @default(cuid())
-  name        String
-  type        CampaignType
-  status      Status    @default(ACTIVE)
-  budget      Float
-  website     Website   @relation(fields: [websiteId], references: [id])
-  websiteId   String
-  keywords    Keyword[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id              String    @id @default(cuid())
+  name            String
+  type            CampaignType
+  status          Status    @default(ACTIVE)
+  budget          Float
+  website         Website   @relation(fields: [websiteId], references: [id])
+  websiteId       String
+  keywords        Keyword[]
+  ads             Ad[]
+  bidStrategy     BidStrategy
+  targetCPA       Float?
+  startDate       DateTime
+  endDate         DateTime?
+  metrics         CampaignMetrics[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model Ad {
+  id              String    @id @default(cuid())
+  campaign        Campaign  @relation(fields: [campaignId], references: [id])
+  campaignId      String
+  type            AdType
+  headline        String
+  description     String
+  finalUrl        String
+  status          Status    @default(ACTIVE)
+  metrics         AdMetrics[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 }
 
 model Keyword {
-  id          String    @id @default(cuid())
-  word        String
-  website     Website   @relation(fields: [websiteId], references: [id])
-  websiteId   String
-  campaigns   Campaign[]
-  metrics     KeywordMetrics[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id              String    @id @default(cuid())
+  word            String
+  website         Website   @relation(fields: [websiteId], references: [id])
+  websiteId       String
+  campaigns       Campaign[]
+  type            KeywordType @default(BROAD)
+  metrics         KeywordMetrics[]
+  competition     Float?    // 0-1 schaal
+  searchVolume    Int?
+  suggestedBid    Float?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+// Analytics modellen
+model Analytics {
+  id              String    @id @default(cuid())
+  website         Website   @relation(fields: [websiteId], references: [id])
+  websiteId       String
+  pageViews       Int
+  uniqueVisitors  Int
+  bounceRate      Float
+  avgTimeOnSite   Float
+  date            DateTime  @default(now())
 }
 
 model KeywordMetrics {
-  id          String    @id @default(cuid())
-  keyword     Keyword   @relation(fields: [keywordId], references: [id])
-  keywordId   String
-  position    Int?
-  volume      Int?
-  cpc         Float?
-  competition Float?
-  date        DateTime  @default(now())
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id              String    @id @default(cuid())
+  keyword         Keyword   @relation(fields: [keywordId], references: [id])
+  keywordId       String
+  position        Int?
+  clicks          Int       @default(0)
+  impressions     Int       @default(0)
+  ctr             Float?    // Click-through rate
+  averageCpc      Float?    // Gemiddelde kosten per klik
+  spend           Float     @default(0)
+  conversions     Int       @default(0)
+  date            DateTime  @default(now())
 }
 
+model AdMetrics {
+  id              String    @id @default(cuid())
+  ad              Ad        @relation(fields: [adId], references: [id])
+  adId            String
+  impressions     Int       @default(0)
+  clicks          Int       @default(0)
+  ctr             Float?
+  averageCpc      Float?
+  spend           Float     @default(0)
+  conversions     Int       @default(0)
+  date            DateTime  @default(now())
+}
+
+model CampaignMetrics {
+  id              String    @id @default(cuid())
+  campaign        Campaign  @relation(fields: [campaignId], references: [id])
+  campaignId      String
+  impressions     Int       @default(0)
+  clicks          Int       @default(0)
+  ctr             Float?
+  averageCpc      Float?
+  spend           Float     @default(0)
+  conversions     Int       @default(0)
+  date            DateTime  @default(now())
+}
+
+// Competitor analyse
+model Competitor {
+  id              String    @id @default(cuid())
+  website         Website   @relation(fields: [websiteId], references: [id])
+  websiteId       String
+  url             String
+  name            String
+  metrics         CompetitorMetrics[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model CompetitorMetrics {
+  id              String    @id @default(cuid())
+  competitor      Competitor @relation(fields: [competitorId], references: [id])
+  competitorId    String
+  organicKeywords Int?
+  paidKeywords    Int?
+  estimatedTraffic Int?
+  estimatedBudget Float?
+  averagePosition Float?
+  date            DateTime  @default(now())
+}
+
+// API integratie
+model ApiKey {
+  id              String    @id @default(cuid())
+  organization    Organization @relation(fields: [orgId], references: [id])
+  orgId           String
+  provider        ApiProvider
+  key             String
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+// Enums
 enum Role {
   ADMIN
   MANAGER
@@ -107,4 +247,46 @@ enum Status {
   ACTIVE
   PAUSED
   ENDED
+}
+
+enum ContentType {
+  BLOG_POST
+  PRODUCT_DESCRIPTION
+  LANDING_PAGE
+  META_DESCRIPTION
+}
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum KeywordType {
+  BROAD
+  PHRASE
+  EXACT
+  NEGATIVE
+}
+
+enum AdType {
+  TEXT
+  RESPONSIVE
+  DISPLAY
+}
+
+enum BidStrategy {
+  MANUAL_CPC
+  TARGET_CPA
+  MAXIMIZE_CONVERSIONS
+  MAXIMIZE_CLICKS
+}
+
+enum ApiProvider {
+  GOOGLE_ADS
+  SEMRUSH
+  AHREFS
+  WORDPRESS
+  WOOCOMMERCE
+  OPENAI
 }
