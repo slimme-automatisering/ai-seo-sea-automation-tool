@@ -1,26 +1,158 @@
 # Windsurf Rules voor AI Assistant
 
+# Algemene configuratie
+config:
+  language: "nl-NL"
+  project_root: "/e:/Webdesign/GitHub/ai-seo-sea-automation-tool"
+  documentation_path: "/docs"
+  version_control: "git"
+
+# Pre-actie documentatie checks
 pre_action_checks:
-  - read_file: "README.md"
-  - read_directory: "docs/*"
-  - read_file: "docs/setup.md"
-  - read_file: "docs/todo.md"
-  - read_file: "docs/changelog.md"
+  core_docs:
+    - "README.md"
+    - "docs/*"
+  
+  project_docs:
+    requirements:
+      - "docs/prd.md"  # Product Requirements Document
+    
+    technical:
+      frontend:
+        - "docs/frontend.md"
+        - "docs/state-management.md"
+      backend:
+        - "docs/backend.md"
+        - "docs/api.md"
+        - "docs/database-schema.md"
+    
+    infrastructure:
+      - "docs/devops.md"
+      - "docs/performance-optimization.md"
+      - "docs/security-plan.md"
+    
+    development:
+      - "docs/testing-plan.md"
+      - "docs/code-documentation.md"
+      - "docs/third-party-libraries.md"
+      - "docs/user-flow.md"
+    
+    maintenance:
+      - "docs/setup.md"
+      - "docs/todo.md"
+      - "docs/changelog.md"
 
+# Post-actie documentatie updates
 post_action_updates:
-  - update_file: "docs/setup.md"
-  - update_file: "docs/todo.md"
-  - update_file: "docs/changelog.md"
+  required:
+    - "docs/setup.md"
+    - "docs/todo.md"
+    - "docs/changelog.md"
+  
+  verify:
+    - ".windsurfrules"
 
+# Suggesties workflow
 suggestions_workflow:
-  - read_file: "docs/suggestions.md"
-  - ask_user: "Mag ik de volgende suggesties implementeren en toevoegen aan de todo lijst?"
-  - await_user_confirmation: true
-  - on_confirmation:
-    - update_file: "docs/todo.md"
-    - update_file: "docs/changelog.md"
+  input:
+    - read: "docs/suggestions.md"
+    - prompt:
+        text: "Mag ik de volgende suggesties implementeren en toevoegen aan de todo lijst?"
+        type: "confirmation"
+        required: true
+  
+  on_approval:
+    update:
+      - "docs/todo.md"
+      - "docs/changelog.md"
+      - "docs/suggestions.md"
+    verify:
+      - ".windsurfrules"
 
+# Documentatie regels
 documentation_rules:
-  - all_changes_must_be_documented: true
-  - update_relevant_docs: true
-  - maintain_version_history: true
+  requirements:
+    - rule: "all_changes_must_be_documented"
+      enforce: true
+    - rule: "update_relevant_docs"
+      enforce: true
+    - rule: "maintain_version_history"
+      enforce: true
+  
+  validation:
+    - check_broken_links: true
+    - verify_formatting: true
+    - ensure_consistency: true
+
+# Automatische validaties
+validations:
+  pre_commit:
+    - markdown_lint
+    - broken_links
+    - formatting
+  
+  post_commit:
+    - documentation_coverage
+    - version_consistency
+
+# Automatische commit configuratie
+git_automation:
+  auto_commit: true
+  commit_message_template:
+    format: "[{type}] {scope}: {description}"
+    types:
+      - "docs"    # Documentatie updates
+      - "feat"    # Nieuwe features
+      - "fix"     # Bug fixes
+      - "chore"   # Onderhoudstaken
+      - "refactor"# Code herstructurering
+      - "test"    # Test toevoegingen/updates
+      - "style"   # Code style updates
+    
+    scopes:
+      - "setup"   # Setup documentatie
+      - "todo"    # Todo lijst
+      - "suggest" # Suggesties
+      - "security"# Security updates
+      - "perf"    # Performance updates
+      - "api"     # API documentatie
+      - "frontend"# Frontend documentatie
+      - "backend" # Backend documentatie
+    
+    auto_generate:
+      rules:
+        - when: "docs/*.md"
+          template: "[docs] {filename}: {summary_of_changes}"
+        - when: "setup.md"
+          template: "[docs] setup: {list_of_updated_sections}"
+        - when: "todo.md"
+          template: "[chore] todo: {added_or_completed_items}"
+        - when: "suggestions.md"
+          template: "[feat] suggest: {new_suggestions}"
+        - when: "changelog.md"
+          template: "[docs] changelog: Update for version {version}"
+      
+      variables:
+        summary_length: 72  # Maximum lengte van commit message
+        include_files: true # Lijst gewijzigde bestanden in commit body
+        add_ticket_refs: true # Voeg ticket referenties toe indien gevonden
+    
+    commit_hooks:
+      pre_commit:
+        - validate_message_format
+        - check_branch_naming
+        - verify_ticket_references
+      
+      post_commit:
+        - update_changelog
+        - notify_reviewers
+        - update_documentation_index
+
+  branch_automation:
+    naming_convention: "{type}/{ticket}-{description}"
+    auto_branch: true
+    auto_merge_conditions:
+      - all_checks_passed
+      - approved_by_reviewer
+      - no_conflicts
+      - documentation_updated
