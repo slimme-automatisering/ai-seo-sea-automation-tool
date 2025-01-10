@@ -1,0 +1,110 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  name          String?
+  role          Role      @default(USER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  websites      Website[]
+  organization  Organization? @relation(fields: [orgId], references: [id])
+  orgId         String?
+}
+
+model Organization {
+  id        String    @id @default(cuid())
+  name      String
+  plan      Plan      @default(INDIVIDUAL)
+  users     User[]
+  websites  Website[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Website {
+  id            String    @id @default(cuid())
+  url           String
+  name          String
+  user          User      @relation(fields: [userId], references: [id])
+  userId        String
+  organization  Organization @relation(fields: [orgId], references: [id])
+  orgId         String
+  campaigns     Campaign[]
+  keywords      Keyword[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Campaign {
+  id          String    @id @default(cuid())
+  name        String
+  type        CampaignType
+  status      Status    @default(ACTIVE)
+  budget      Float
+  website     Website   @relation(fields: [websiteId], references: [id])
+  websiteId   String
+  keywords    Keyword[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Keyword {
+  id          String    @id @default(cuid())
+  word        String
+  website     Website   @relation(fields: [websiteId], references: [id])
+  websiteId   String
+  campaigns   Campaign[]
+  metrics     KeywordMetrics[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model KeywordMetrics {
+  id          String    @id @default(cuid())
+  keyword     Keyword   @relation(fields: [keywordId], references: [id])
+  keywordId   String
+  position    Int?
+  volume      Int?
+  cpc         Float?
+  competition Float?
+  date        DateTime  @default(now())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  USER
+}
+
+enum Plan {
+  INDIVIDUAL
+  PRO
+  ADVANCED
+  ENTERPRISE
+}
+
+enum CampaignType {
+  SEO
+  SEA
+  BOTH
+}
+
+enum Status {
+  ACTIVE
+  PAUSED
+  ENDED
+}

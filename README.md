@@ -25,7 +25,7 @@ This project is a progressive web app (PWA) designed to automate and optimize SE
 4. Run the frontend using `npm start` and the backend using `npm run dev`.
 
 ## Contributing
-Please read the [CONTRIBUTING.md](CONTRIBUTING.md) file for details on how to contribute to this project.
+Please read the [CONTRIBUTING.md](CONTRIBUTING.md) file for details on how to contribute to this project. 
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

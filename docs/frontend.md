@@ -50,3 +50,16 @@
 - **Lazy Loading:** Components will be loaded only when needed (e.g., charts and tables when the user navigates to the analytics section).
 - **Code Splitting:** The app will be split into smaller bundles to reduce initial load time.
 - **Caching:** Frequently accessed data will be cached using Redis for faster retrieval.
+
+frontend/
+├── public/                  # Static assets (e.g., images, favicon)
+├── src/
+│   ├── components/          # Reusable UI components (e.g., buttons, cards)
+│   ├── pages/               # Page components (e.g., Dashboard, SEO, SEA)
+│   ├── styles/              # Global styles and themes
+│   ├── utils/               # Utility functions (e.g., API calls, form validation)
+│   ├── store/               # Redux store and slices
+│   ├── App.js               # Main app component
+│   ├── index.js             # Entry point
+├── .env                     # Environment variables
+├── package.json             # Dependencies and scripts

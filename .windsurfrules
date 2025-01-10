@@ -1,0 +1,26 @@
+# Windsurf Rules voor AI Assistant
+
+pre_action_checks:
+  - read_file: "README.md"
+  - read_directory: "docs/*"
+  - read_file: "docs/setup.md"
+  - read_file: "docs/todo.md"
+  - read_file: "docs/changelog.md"
+
+post_action_updates:
+  - update_file: "docs/setup.md"
+  - update_file: "docs/todo.md"
+  - update_file: "docs/changelog.md"
+
+suggestions_workflow:
+  - read_file: "docs/suggestions.md"
+  - ask_user: "Mag ik de volgende suggesties implementeren en toevoegen aan de todo lijst?"
+  - await_user_confirmation: true
+  - on_confirmation:
+    - update_file: "docs/todo.md"
+    - update_file: "docs/changelog.md"
+
+documentation_rules:
+  - all_changes_must_be_documented: true
+  - update_relevant_docs: true
+  - maintain_version_history: true

@@ -156,3 +156,17 @@ graph TD
 - **GitHub CI/CD:** For continuous integration and deployment.
 
 ---
+
+backend/
+├── config/                  # Configuration files (e.g., database, environment variables)
+├── controllers/             # Request handlers (e.g., user, campaign, content)
+├── models/                  # Database models (e.g., User, Campaign, Content)
+├── routes/                  # API routes (e.g., REST, GraphQL)
+├── services/                # Business logic (e.g., AI processing, third-party integrations)
+├── utils/                   # Utility functions (e.g., authentication, caching)
+├── middleware/              # Middleware (e.g., rate limiting, input validation)
+├── tests/                   # Test files (e.g., unit tests, integration tests)
+├── app.js                   # Main application file
+├── server.js                # Server entry point
+├── .env                     # Environment variables
+├── package.json             # Dependencies and scripts

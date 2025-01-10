@@ -53,7 +53,7 @@ paths:
 ## 5. Code Style Guide
 - **Linting:** Use ESLint for JavaScript/React and Prettier for code formatting.
 - **Naming Conventions:** Follow consistent naming conventions for variables, functions, and files.
-- **Folder Structure:** Organize code into logical folders (e.g., components, services, utils).
+- **Folder Structure:** Organize code into logical folders (e.g., components, services, utils), follow the file-structure.md guidelines.
 
 ## 6. Testing Documentation
 - **Unit Tests:** Document how to write and run unit tests.
