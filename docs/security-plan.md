@@ -1,102 +1,160 @@
 # Security Plan Documentation
 
-## 1. Authentication
-### Email & Password Authentication
-- **Email Verificatie:** Verplichte email verificatie voor nieuwe accounts
-- **Wachtwoord Reset:** Veilige wachtwoord reset functionaliteit met tijdelijke tokens
-- **Wachtwoord Opslag:** Bcrypt hashing met salt rounds voor veilige wachtwoord opslag
+## 1. Authentication & Identity Management
+### Multi-Factor Authentication (MFA)
+- **TOTP-based 2FA:** 
+  - Time-based One-Time Password implementatie
+  - Compatibel met authenticator apps (Google, Microsoft, Authy)
+  - QR code generatie voor eenvoudige setup
+- **Backup Recovery:**
+  - Generatie van 10 unieke backup codes
+  - Veilige opslag met one-way hashing
+  - Automatische regeneratie na gebruik
+- **Biometric Support:**
+  - WebAuthn/FIDO2 integratie
+  - Fingerprint en Face ID ondersteuning
+  - Hardware security key support
 
-### Two-Factor Authentication (2FA)
-- **TOTP-based 2FA:** Implementatie van Time-based One-Time Password (TOTP)
-- **Backup Codes:** Generatie van 10 unieke backup codes voor noodgevallen
-- **QR Code Support:** QR code generatie voor eenvoudige 2FA setup
+### Session Security
+- **Token Management:**
+  - JWT met korte levensduur (15 minuten)
+  - Secure refresh tokens (7 dagen)
+  - Token rotation bij gebruik
+- **Session Monitoring:**
+  - Device fingerprinting
+  - Geografische locatie tracking
+  - Verdachte activiteit detectie
+- **Automatic Security Actions:**
+  - Forced logout bij verdachte activiteit
+  - IP-based blocking
+  - Account lockout na herhaalde foute pogingen
 
-### Session Management
-- **JWT Tokens:** Secure JSON Web Tokens voor authenticatie
-- **Session Tracking:** Tracking van user-agent en IP adres
-- **Auto-Cleanup:** Automatische opruiming van verlopen sessies
-- **Tijdelijke Tokens:** Speciale tijdelijke tokens voor 2FA verificatie
+## 2. Data Security
+### Encryption
+- **Data at Rest:**
+  - AES-256-GCM voor gevoelige data
+  - Argon2id voor wachtwoord hashing
+  - Envelope encryption voor API keys
+- **Data in Transit:**
+  - TLS 1.3 requirement
+  - Perfect Forward Secrecy
+  - Strong cipher suites only
+- **Key Management:**
+  - Automatische key rotation
+  - Secure key storage in vault
+  - Hardware Security Module (HSM) support
 
-## 2. Authorization
+### Data Access Control
 - **Role-Based Access Control (RBAC):**
-  - **Admin:** Volledige toegang tot alle features en data
-  - **Manager:** Toegang tot campagnes, advertenties en analytics
-  - **User:** Toegang tot content creatie en product optimalisatie
+  - Granulaire permissies per role
+  - Just-In-Time access verlening
+  - Automatic permission review
+- **Data Classification:**
+  - Automatische PII detectie
+  - Data retention policies
+  - Secure data deletion
 
-## 3. Data Encryption
-- **At Rest:** 
-  - AES-256 encryptie voor gevoelige data
-  - Bcrypt hashing voor wachtwoorden
-  - Secure opslag van 2FA secrets
-- **In Transit:** HTTPS met TLS 1.2 of hoger
+## 3. Application Security
+### Input/Output Security
+- **Input Validation:**
+  - Schema-based validation
+  - Content-type verificatie
+  - File upload scanning
+- **Output Encoding:**
+  - Context-aware encoding
+  - Safe HTML rendering
+  - JSON escape sequences
 
-## 4. Input Validation
-- **Sanitization:** Sanitize user inputs om SQL injectie en XSS attacks te voorkomen
-- **Validation:** Input validatie met validator.js
-- **Token Validatie:** Strikte validatie van verificatie en reset tokens
+### API Security
+- **Rate Limiting:**
+  - Token bucket algorithm
+  - Per-endpoint limieten
+  - User-based quotas
+- **Request Validation:**
+  - API key verificatie
+  - OAuth 2.0 flows
+  - HMAC request signing
 
-## 5. Rate Limiting
-- **API Rate Limiting:** 
-  - Globale rate limiting per IP
-  - Specifieke limieten voor auth endpoints
-  - Progressieve rate limiting bij herhaalde foute pogingen
-- **IP Blocking:** Blokkeren van IPs die limieten overschrijden
+## 4. Infrastructure Security
+### Network Security
+- **Firewall Rules:**
+  - Allowlist-based access
+  - Port restriction
+  - DDoS protection
+- **Network Monitoring:**
+  - Real-time traffic analysis
+  - Anomaly detection
+  - Automated blocking
 
-## 6. Security Headers
-- **Helmet:** HTTP security headers:
-  - Content Security Policy
-  - X-Frame-Options
-  - X-XSS-Protection
-  - Strict-Transport-Security
-  - Referrer-Policy
+### Container Security
+- **Image Scanning:**
+  - Vulnerability scanning
+  - Base image updates
+  - Dependencies check
+- **Runtime Security:**
+  - Seccomp profiles
+  - AppArmor policies
+  - Resource limitations
 
-## 7. Audit Logging
-- **Authentication Logging:**
-  - Login pogingen (succesvol en mislukt)
-  - 2FA activaties en verificaties
-  - Wachtwoord reset aanvragen
-  - Email verificaties
-- **Session Logging:**
-  - Sessie creatie en verloop
-  - IP adressen en user-agents
-  - Verdachte activiteiten
+## 5. Security Monitoring & Response
+### Logging & Monitoring
+- **Security Logging:**
+  - Centralized log aggregation
+  - Log integrity verification
+  - Retention compliance
+- **Real-time Monitoring:**
+  - SIEM integration
+  - Anomaly detection
+  - Alert correlation
 
-## 8. Spam en Bot Protection
-- **reCAPTCHA:** Implementatie bij gevoelige endpoints
-- **Rate Limiting:** Specifieke limieten voor auth endpoints
-- **Verdachte Activiteit Detectie:** Monitoring van login patronen
+### Incident Response
+- **Response Procedures:**
+  - Incident classification
+  - Response playbooks
+  - Communication templates
+- **Recovery Plans:**
+  - Backup restoration
+  - Service continuity
+  - Post-incident analysis
 
-## 9. DDoS Prevention
-- **Cloudflare:** DDoS mitigatie
-- **Rate Limiting:** Application-level rate limiting
-- **Session Management:** Efficiënte sessie handling
+## 6. Compliance & Auditing
+### Security Standards
+- **Compliance Frameworks:**
+  - OWASP Top 10
+  - GDPR requirements
+  - ISO 27001 controls
+- **Regular Auditing:**
+  - Automated security scans
+  - Penetration testing
+  - Code security reviews
 
-## 10. Fraud Detection
-- **Machine Learning:**
-  - Detectie van verdachte login patronen
-  - Identificatie van mogelijke account overnames
-- **Alerts:** Real-time alerts voor verdachte activiteiten
+### Security Training
+- **Developer Training:**
+  - Secure coding practices
+  - Security awareness
+  - Incident response training
+- **User Education:**
+  - Security best practices
+  - Phishing awareness
+  - Password management
 
-## 11. Compliance
-- **GDPR:**
-  - Veilige opslag van gebruikersdata
-  - Data minimalisatie principes
-  - Recht op vergetelheid implementatie
-- **PCI DSS:** Veilige verwerking van betalingsgegevens
+## 7. Continuous Security Improvement
+### Security Testing
+- **Automated Testing:**
+  - SAST (Static Analysis)
+  - DAST (Dynamic Analysis)
+  - Dependency scanning
+- **Manual Testing:**
+  - Code reviews
+  - Penetration testing
+  - Security architecture reviews
 
-## 12. Incident Response
-- **Incident Response Plan:**
-  - Procedures voor verschillende security incidenten
-  - Escalatie procedures
-  - Recovery procedures
-- **Communication Plan:**
-  - Gebruiker notificaties
-  - Stakeholder communicatie
-
-## 13. Security Testing
-- **Penetration Testing:**
-  - Regelmatige security audits
-  - Focus op auth systeem
-- **Vulnerability Scanning:**
-  - Dependency scanning met Snyk
-  - Regular security updates
+### Security Updates
+- **Patch Management:**
+  - Automated vulnerability scanning
+  - Critical update procedures
+  - Dependency updates
+- **Security Roadmap:**
+  - Quarterly security reviews
+  - Technology upgrades
+  - Control effectiveness measurement
