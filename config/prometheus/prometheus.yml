@@ -1,0 +1,29 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - "alert.rules"
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - alertmanager:9093
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  - job_name: 'seo-tool-backend'
+    metrics_path: '/monitoring/metrics'
+    static_configs:
+      - targets: ['backend:3000']
+    basic_auth:
+      username: ${PROMETHEUS_USER}
+      password: ${PROMETHEUS_PASSWORD}

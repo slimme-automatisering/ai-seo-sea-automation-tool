@@ -1,0 +1,99 @@
+{{ define "email.subject" }}
+[{{ .Status | toUpper }}] {{ .CommonLabels.alertname }} - SEO Tool Alert
+{{ end }}
+
+{{ define "email.html" }}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Alert Notification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .header {
+            background-color: {{ if eq .Status "firing" }}#ff4444{{ else }}#44cc44{{ end }};
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .alert-details {
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .actions {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>{{ .Status | toUpper }}: {{ .CommonLabels.alertname }}</h2>
+    </div>
+
+    {{ range .Alerts }}
+    <div class="alert-details">
+        <p><span class="label">Alert:</span> {{ .Annotations.summary }}</p>
+        <p><span class="label">Description:</span> {{ .Annotations.description }}</p>
+        <p><span class="label">Severity:</span> {{ .Labels.severity }}</p>
+        <p><span class="label">Started:</span> {{ .StartsAt }}</p>
+        {{ if .EndsAt }}<p><span class="label">Resolved:</span> {{ .EndsAt }}</p>{{ end }}
+        
+        <h3>Labels:</h3>
+        <ul>
+        {{ range .Labels.SortedPairs }}
+            <li>{{ .Name }}: {{ .Value }}</li>
+        {{ end }}
+        </ul>
+    </div>
+    {{ end }}
+
+    <div class="actions">
+        <h3>Required Actions:</h3>
+        {{ if eq .Status "firing" }}
+            {{ if eq .CommonLabels.severity "critical" }}
+            <ol>
+                <li>Onmiddellijk het incident response team contacteren</li>
+                <li>Begin met root cause analysis</li>
+                <li>Start mitigatie procedures volgens runbook</li>
+            </ol>
+            {{ else if eq .CommonLabels.severity "warning" }}
+            <ol>
+                <li>Onderzoek de oorzaak</li>
+                <li>Evalueer impact op systeem</li>
+                <li>Plan mitigatie acties indien nodig</li>
+            </ol>
+            {{ else }}
+            <ol>
+                <li>Monitor de situatie</li>
+                <li>Update documentatie indien nodig</li>
+            </ol>
+            {{ end }}
+        {{ else }}
+        <ol>
+            <li>Verifieer systeem status</li>
+            <li>Update incident log</li>
+            <li>Review preventieve maatregelen</li>
+        </ol>
+        {{ end }}
+    </div>
+
+    {{ if .CommonAnnotations.runbook_url }}
+    <p><a href="{{ .CommonAnnotations.runbook_url }}">View Runbook</a></p>
+    {{ end }}
+</body>
+</html>
+{{ end }}

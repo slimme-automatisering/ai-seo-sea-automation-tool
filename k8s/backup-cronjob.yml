@@ -1,0 +1,78 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: database-backup
+  namespace: production
+spec:
+  schedule: "0 1 * * *"  # Dagelijks om 01:00
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: backup
+            image: postgres:14
+            command:
+            - /bin/sh
+            - -c
+            - |
+              # Maak een timestamp voor de backup naam
+              TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+              BACKUP_FILE="backup_${TIMESTAMP}.sql.gz"
+              
+              # Maak de database backup
+              PGPASSWORD=$DB_PASSWORD pg_dump -h $DB_HOST -U $DB_USER $DB_NAME | gzip > /backup/$BACKUP_FILE
+              
+              # Upload naar S3
+              aws s3 cp /backup/$BACKUP_FILE s3://${S3_BUCKET}/database-backups/$BACKUP_FILE
+              
+              # Verwijder oude backups (behoud 7 dagen)
+              aws s3 ls s3://${S3_BUCKET}/database-backups/ | sort -r | tail -n +8 | awk '{print $4}' | xargs -I {} aws s3 rm s3://${S3_BUCKET}/database-backups/{}
+              
+              # Verwijder lokale backup
+              rm /backup/$BACKUP_FILE
+            env:
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: database-credentials
+                  key: host
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: database-credentials
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-credentials
+                  key: password
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: database-credentials
+                  key: database
+            - name: S3_BUCKET
+              value: "seo-sea-backups"
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: aws-credentials
+                  key: access-key
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aws-credentials
+                  key: secret-key
+            - name: AWS_DEFAULT_REGION
+              value: "eu-west-1"
+            volumeMounts:
+            - name: backup-storage
+              mountPath: /backup
+          volumes:
+          - name: backup-storage
+            emptyDir: {}
+          restartPolicy: OnFailure

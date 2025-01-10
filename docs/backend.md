@@ -43,8 +43,8 @@ USERS ||--o{ CAMPAIGNS : "manages"
   }
 }
   
- ```
- ---
+```
+---
 
 ## 3. Authentication
 - **Authentication Method:** OAuth 2.0
@@ -59,6 +59,113 @@ USERS ||--o{ CAMPAIGNS : "manages"
 - **GraphQL:** For internal data queries requiring flexibility and scalability (e.g., fetching SEO/SEA performance data, dashboard visualizations).
 - **WebSockets:** For real-time communication (e.g., live updates, notifications).
 - **Security and Rate Limiting:** Strong security measures (e.g., HTTPS, input validation) and rate limiting will be implemented to prevent API misuse.
+
+---
+
+## 4. Services
+
+### Content Generation Service
+```typescript
+interface ContentGenerationParams {
+    type: 'blog' | 'product' | 'meta' | 'alt-text';
+    keywords: string[];
+    tone?: string;
+    length?: number;
+    context?: string;
+}
+```
+- Gebruikt OpenAI API voor content generatie
+- Ondersteunt verschillende content types
+- Optimalisatie voor SEO en leesbaarheid
+
+### SEO Analysis Service
+```typescript
+interface SeoAnalysisResult {
+    meta: MetaAnalysis;
+    content: ContentAnalysis;
+    technical: TechnicalAnalysis;
+    suggestions: string[];
+}
+```
+- Complete SEO analyse van webpagina's
+- Meta tags en content analyse
+- Technische SEO checks
+- Performance metingen
+
+### Google Ads Service
+```typescript
+interface CampaignParams {
+    name: string;
+    budget: number;
+    targetLocations: string[];
+    keywords: string[];
+    negativeKeywords?: string[];
+    startDate?: Date;
+    endDate?: Date;
+}
+```
+- Volledige Google Ads API integratie
+- Campagne management
+- Budget beheer
+- Performance tracking
+
+### Keyword Research Service
+```typescript
+interface KeywordSuggestion {
+    keyword: string;
+    searchVolume: number;
+    difficulty: number;
+    cpc: number;
+    competition: number;
+    source: 'semrush' | 'ahrefs' | 'combined';
+}
+```
+- Integratie met SEMrush en Ahrefs
+- Keyword analyse en suggesties
+- Zoekvolume en competitie tracking
+
+### Competitor Tracking Service
+```typescript
+interface CompetitorAnalysis {
+    url: string;
+    seoScore: number;
+    traffic: TrafficData;
+    keywordRankings: KeywordRanking[];
+    backlinks: BacklinkData;
+    contentGaps: ContentGap[];
+}
+```
+- Real-time concurrent monitoring
+- Traffic en backlink analyse
+- Content gap identificatie
+- SEO score berekening
+
+## 5. API Endpoints
+
+### Content Endpoints
+- `POST /api/content/generate` - Genereer nieuwe content
+- `POST /api/content/optimize` - Optimaliseer bestaande content
+- `GET /api/content/analyze` - Analyseer content kwaliteit
+
+### SEO Endpoints
+- `POST /api/seo/analyze` - Voer SEO analyse uit
+- `GET /api/seo/suggestions` - Krijg SEO verbetervoorstellen
+- `POST /api/seo/monitor` - Start SEO monitoring
+
+### Google Ads Endpoints
+- `POST /api/ads/campaigns` - Maak nieuwe campagne
+- `GET /api/ads/campaigns/:id` - Krijg campagne details
+- `GET /api/ads/campaigns/:id/performance` - Krijg campagne prestaties
+
+### Keyword Endpoints
+- `POST /api/keywords/research` - Doe keyword research
+- `GET /api/keywords/analyze/:keyword` - Analyseer specifieke keyword
+- `GET /api/keywords/suggestions` - Krijg keyword suggesties
+
+### Competitor Endpoints
+- `POST /api/competitors/track` - Start competitor tracking
+- `GET /api/competitors/:id/analysis` - Krijg competitor analyse
+- `GET /api/competitors/:id/gaps` - Identificeer content gaps
 
 ---
 

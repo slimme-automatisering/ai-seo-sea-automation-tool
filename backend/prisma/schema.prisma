@@ -32,6 +32,10 @@ model User {
   orgId               String?
   aiCredits           Int       @default(0)
   sessions            Session[]
+
+  @@index([email])
+  @@index([role])
+  @@index([orgId])
 }
 
 model Session {
@@ -44,6 +48,10 @@ model Session {
   lastActivity DateTime @default(now())
   expiresAt    DateTime
   createdAt    DateTime @default(now())
+
+  @@index([userId])
+  @@index([token])
+  @@index([expiresAt])
 }
 
 model Organization {
@@ -55,6 +63,8 @@ model Organization {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   apiKeys       ApiKey[]
+
+  @@index([plan])
 }
 
 model Website {
@@ -73,6 +83,10 @@ model Website {
   analytics       Analytics[]
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([orgId])
+  @@index([url])
 }
 
 // SEO modellen
@@ -85,6 +99,10 @@ model SeoAudit {
   recommendations Json      // Opgeslagen als JSON met aanbevelingen
   metrics         Json      // PageSpeed scores, mobiele vriendelijkheid, etc.
   createdAt       DateTime  @default(now())
+
+  @@index([websiteId])
+  @@index([score])
+  @@index([createdAt])
 }
 
 model ContentItem {
@@ -105,9 +123,14 @@ model ContentItem {
   publishDate     DateTime?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+
+  @@index([websiteId])
+  @@index([type])
+  @@index([url])
+  @@index([keywords])
+  @@index([aiGenerated])
 }
 
-// SEA modellen
 model Campaign {
   id              String    @id @default(cuid())
   name            String
@@ -125,6 +148,11 @@ model Campaign {
   metrics         CampaignMetrics[]
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+
+  @@index([websiteId])
+  @@index([type])
+  @@index([status])
+  @@index([startDate])
 }
 
 model Ad {
@@ -139,6 +167,10 @@ model Ad {
   metrics         AdMetrics[]
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+
+  @@index([campaignId])
+  @@index([type])
+  @@index([status])
 }
 
 model Keyword {
@@ -154,6 +186,12 @@ model Keyword {
   suggestedBid    Float?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+
+  @@index([websiteId])
+  @@index([word])
+  @@index([type])
+  @@index([competition])
+  @@index([searchVolume])
 }
 
 // Analytics modellen
@@ -166,6 +204,11 @@ model Analytics {
   bounceRate      Float
   avgTimeOnSite   Float
   date            DateTime  @default(now())
+
+  @@index([websiteId])
+  @@index([date])
+  @@index([pageViews])
+  @@index([bounceRate])
 }
 
 model KeywordMetrics {
@@ -180,6 +223,13 @@ model KeywordMetrics {
   spend           Float     @default(0)
   conversions     Int       @default(0)
   date            DateTime  @default(now())
+
+  @@index([keywordId])
+  @@index([date])
+  @@index([position])
+  @@index([clicks])
+  @@index([impressions])
+  @@index([spend])
 }
 
 model AdMetrics {
@@ -193,6 +243,12 @@ model AdMetrics {
   spend           Float     @default(0)
   conversions     Int       @default(0)
   date            DateTime  @default(now())
+
+  @@index([adId])
+  @@index([date])
+  @@index([impressions])
+  @@index([clicks])
+  @@index([spend])
 }
 
 model CampaignMetrics {
@@ -206,6 +262,12 @@ model CampaignMetrics {
   spend           Float     @default(0)
   conversions     Int       @default(0)
   date            DateTime  @default(now())
+
+  @@index([campaignId])
+  @@index([date])
+  @@index([impressions])
+  @@index([clicks])
+  @@index([spend])
 }
 
 // Competitor analyse
@@ -218,6 +280,10 @@ model Competitor {
   metrics         CompetitorMetrics[]
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+
+  @@index([websiteId])
+  @@index([url])
+  @@index([name])
 }
 
 model CompetitorMetrics {
@@ -230,6 +296,13 @@ model CompetitorMetrics {
   estimatedBudget Float?
   averagePosition Float?
   date            DateTime  @default(now())
+
+  @@index([competitorId])
+  @@index([date])
+  @@index([organicKeywords])
+  @@index([paidKeywords])
+  @@index([estimatedTraffic])
+  @@index([estimatedBudget])
 }
 
 // API integratie
@@ -242,6 +315,10 @@ model ApiKey {
   isActive        Boolean   @default(true)
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+
+  @@index([orgId])
+  @@index([provider])
+  @@index([isActive])
 }
 
 // Enums

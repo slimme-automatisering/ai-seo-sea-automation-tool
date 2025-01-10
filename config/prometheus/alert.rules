@@ -1,0 +1,56 @@
+groups:
+- name: seo-tool-alerts
+  rules:
+  - alert: HighRequestLatency
+    expr: rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m]) > 1
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: High request latency on {{ $labels.instance }}
+      description: Request latency is above 1s (current value: {{ $value }}s)
+
+  - alert: HighErrorRate
+    expr: rate(application_errors_total[5m]) > 0.1
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: High error rate on {{ $labels.instance }}
+      description: Error rate is above 10% (current value: {{ $value }})
+
+  - alert: HighCPUUsage
+    expr: cpu_usage_percent > 80
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: High CPU usage on {{ $labels.instance }}
+      description: CPU usage is above 80% (current value: {{ $value }}%)
+
+  - alert: HighMemoryUsage
+    expr: memory_usage_bytes / 1024 / 1024 > 1024
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: High memory usage on {{ $labels.instance }}
+      description: Memory usage is above 1GB (current value: {{ $value }}MB)
+
+  - alert: ServiceDown
+    expr: up == 0
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: Service {{ $labels.instance }} is down
+      description: Service has been down for more than 1 minute
+
+  - alert: LowAPISuccessRate
+    expr: business_metric_api_success_rate < 95
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: Low API success rate
+      description: API success rate is below 95% (current value: {{ $value }}%)

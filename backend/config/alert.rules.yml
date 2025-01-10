@@ -1,0 +1,82 @@
+groups:
+  - name: main
+    rules:
+      # High Error Rate
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: High HTTP error rate
+          description: "Error rate is above 10% (current value: {{ $value }})"
+
+      # High Response Time
+      - alert: HighResponseTime
+        expr: http_request_duration_seconds{quantile="0.9"} > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: High response time
+          description: "90th percentile of response time is above 2 seconds"
+
+      # High CPU Usage
+      - alert: HighCPUUsage
+        expr: avg(rate(process_cpu_seconds_total[5m])) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: High CPU usage
+          description: "CPU usage is above 80%"
+
+      # High Memory Usage
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: High memory usage
+          description: "Memory usage is above 85%"
+
+      # Redis Connection Issues
+      - alert: RedisConnectionIssues
+        expr: redis_up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: Redis connection issues
+          description: "Redis instance is down"
+
+      # Database Connection Issues
+      - alert: DatabaseConnectionIssues
+        expr: pg_up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: Database connection issues
+          description: "PostgreSQL instance is down"
+
+      # High Job Queue Size
+      - alert: HighJobQueueSize
+        expr: bull_queue_size > 1000
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: High job queue size
+          description: "Job queue size is above 1000"
+
+      # High Failed Job Rate
+      - alert: HighFailedJobRate
+        expr: rate(bull_jobs_failed_total[5m]) / rate(bull_jobs_completed_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: High job failure rate
+          description: "Job failure rate is above 10%"

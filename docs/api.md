@@ -1,51 +1,267 @@
-# API Documentation
+# API Documentatie
 
-## 1. RESTful APIs
-### Campaigns
-- **GET /campaigns:** Get all campaigns.
-- **POST /campaigns:** Create a new campaign.
-- **GET /campaigns/{id}:** Get a specific campaign.
-- **PUT /campaigns/{id}:** Update a specific campaign.
-- **DELETE /campaigns/{id}:** Delete a specific campaign.
+## 1. Core Services
 
-### Content
-- **GET /content:** Get all content.
-- **POST /content:** Create new content.
-- **GET /content/{id}:** Get specific content.
-- **PUT /content/{id}:** Update specific content.
-- **DELETE /content/{id}:** Delete specific content.
+### SeoAnalysisService
+```typescript
+interface SeoAnalysisService {
+    // Analyseer een specifieke pagina
+    analyzePage(url: string): Promise<SeoAnalysisResult>;
+    
+    // Analyseer technische aspecten
+    analyzeTechnical(url: string, html: string): Promise<TechnicalAnalysis>;
+    
+    // Check mobile optimalisatie
+    checkMobileOptimization(html: string): Promise<MobileScore>;
+    
+    // Meet laadtijd
+    measureLoadTime(url: string): Promise<LoadTimeMetrics>;
+}
 
-### Keywords
-- **GET /keywords:** Get all keywords.
-- **POST /keywords:** Create new keywords.
-- **GET /keywords/{id}:** Get specific keywords.
-- **PUT /keywords/{id}:** Update specific keywords.
-- **DELETE /keywords/{id}:** Delete specific keywords.
+interface SeoAnalysisResult {
+    meta: MetaAnalysis;
+    content: ContentAnalysis;
+    technical: TechnicalAnalysis;
+    suggestions: string[];
+}
+```
 
-## 2. GraphQL APIs
-### Queries
-- **getCampaigns:** Fetch all campaigns.
-- **getContent:** Fetch all content.
-- **getKeywords:** Fetch all keywords.
+### KeywordResearchService
+```typescript
+interface KeywordResearchService {
+    // Zoek nieuwe keywords
+    researchKeywords(params: {
+        seed: string;
+        language: string;
+        country: string;
+        limit?: number;
+    }): Promise<KeywordSuggestion[]>;
+    
+    // Analyseer keyword moeilijkheid
+    analyzeKeywordDifficulty(keyword: string): Promise<KeywordDifficulty>;
+    
+    // Get SERP data
+    getSemrushKeywordAnalysis(keyword: string): Promise<SerpData>;
+}
 
-### Mutations
-- **createCampaign:** Create a new campaign.
-- **updateCampaign:** Update an existing campaign.
-- **createContent:** Create new content.
-- **updateContent:** Update existing content.
+interface KeywordSuggestion {
+    keyword: string;
+    searchVolume: number;
+    difficulty: number;
+    cpc: number;
+}
+```
 
-## 3. WebSockets
-- **Real-Time Updates:** Use WebSockets to send real-time updates (e.g., campaign status, content readiness).
+### ContentGenerationService
+```typescript
+interface ContentGenerationService {
+    // Genereer nieuwe content
+    generateContent(params: {
+        type: 'blog' | 'product' | 'meta' | 'alt-text';
+        keywords: string[];
+        tone?: string;
+        length?: number;
+        context?: string;
+    }): Promise<string>;
+    
+    // Update bestaande content
+    updateContent(content: string, params: {
+        keywords: string[];
+        tone?: string;
+    }): Promise<string>;
+    
+    // Suggereer blog onderwerpen
+    suggestBlogTopics(params: {
+        keywords: string[];
+        industry: string;
+    }): Promise<string[]>;
+}
+```
 
-## 4. Error Handling
-- **Status Codes:** Use standard HTTP status codes (e.g., 200 for success, 400 for bad requests).
-- **Error Messages:** Include descriptive error messages in the response body.
+### GoogleAdsService
+```typescript
+interface GoogleAdsService {
+    // Creëer nieuwe campagne
+    createCampaign(params: {
+        name: string;
+        budget: number;
+        targetLocations: string[];
+        keywords: string[];
+        negativeKeywords?: string[];
+        startDate?: Date;
+        endDate?: Date;
+    }): Promise<string>;
+    
+    // Maak shopping campagne
+    createShoppingCampaign(params: {
+        merchantId: string;
+        budget: number;
+        targetRoas: number;
+    }): Promise<string>;
+    
+    // Performance tracking
+    getCampaignPerformance(campaignId: string): Promise<CampaignMetrics>;
+}
+```
 
-## 5. Rate Limiting
-- **API Rate Limiting:** Implement rate limiting to prevent abuse (e.g., 100 requests/minute).
-- **IP Blocking:** Block IPs that exceed rate limits or show suspicious activity.
+## 2. REST Endpoints
 
-## 6. Security
-- **HTTPS:** Use HTTPS for secure communication.
-- **Authentication:** Use OAuth 2.0 for user authentication.
-- **Authorization:** Use role-based access control (RBAC) to restrict access to sensitive endpoints.
+### SEO Endpoints
+
+#### GET /api/seo/analyze
+Analyseer een specifieke URL.
+
+**Parameters:**
+```json
+{
+    "url": "string",
+    "depth": "number",
+    "checkMobile": "boolean"
+}
+```
+
+**Response:**
+```json
+{
+    "success": true,
+    "data": {
+        "meta": {},
+        "content": {},
+        "technical": {},
+        "suggestions": []
+    }
+}
+```
+
+### Keyword Endpoints
+
+#### POST /api/keywords/research
+Start keyword research.
+
+**Request Body:**
+```json
+{
+    "seed": "string",
+    "language": "string",
+    "country": "string",
+    "limit": "number"
+}
+```
+
+**Response:**
+```json
+{
+    "success": true,
+    "data": {
+        "keywords": [
+            {
+                "keyword": "string",
+                "searchVolume": "number",
+                "difficulty": "number",
+                "cpc": "number"
+            }
+        ]
+    }
+}
+```
+
+### Content Endpoints
+
+#### POST /api/content/generate
+Genereer nieuwe content.
+
+**Request Body:**
+```json
+{
+    "type": "blog|product|meta|alt-text",
+    "keywords": ["string"],
+    "tone": "string",
+    "length": "number",
+    "context": "string"
+}
+```
+
+**Response:**
+```json
+{
+    "success": true,
+    "data": {
+        "content": "string"
+    }
+}
+```
+
+### Google Ads Endpoints
+
+#### POST /api/ads/campaigns
+Maak nieuwe campagne.
+
+**Request Body:**
+```json
+{
+    "name": "string",
+    "budget": "number",
+    "targetLocations": ["string"],
+    "keywords": ["string"],
+    "negativeKeywords": ["string"],
+    "startDate": "date",
+    "endDate": "date"
+}
+```
+
+**Response:**
+```json
+{
+    "success": true,
+    "data": {
+        "campaignId": "string"
+    }
+}
+```
+
+## 3. Authenticatie
+Alle API endpoints vereisen authenticatie via JWT tokens:
+```
+Authorization: Bearer <jwt_token>
+```
+
+## 4. Rate Limiting
+- 100 requests per 15 minuten per IP
+- Headers:
+  - X-RateLimit-Limit
+  - X-RateLimit-Remaining
+  - X-RateLimit-Reset
+
+## 5. Error Handling
+```json
+{
+    "success": false,
+    "error": {
+        "code": "string",
+        "message": "string",
+        "details": {}
+    }
+}
+```
+
+## 6. WebSocket Events
+```typescript
+interface WebSocketEvents {
+    // Campaign updates
+    'campaign.status': (campaignId: string, status: string) => void;
+    
+    // Content generation progress
+    'content.progress': (requestId: string, progress: number) => void;
+    
+    // Analysis updates
+    'analysis.complete': (analysisId: string, results: any) => void;
+}
+```
+
+## 7. Security
+- HTTPS verplicht
+- CORS beperkt tot gewhitelist domains
+- Rate limiting per IP
+- Input validatie
+- SQL injection preventie
+- XSS protection

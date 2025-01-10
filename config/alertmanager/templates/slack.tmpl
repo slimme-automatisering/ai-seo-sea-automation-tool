@@ -1,0 +1,39 @@
+{{ define "slack.title" }}
+[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] {{ .CommonLabels.alertname }}
+{{ end }}
+
+{{ define "slack.text" }}
+{{ range .Alerts }}
+*Alert:* {{ .Annotations.summary }}
+*Description:* {{ .Annotations.description }}
+*Severity:* {{ .Labels.severity }}
+*Started:* {{ .StartsAt }}
+{{ if .EndsAt }}*Resolved:* {{ .EndsAt }}{{ end }}
+
+*Labels:*
+{{ range .Labels.SortedPairs }}• {{ .Name }}: {{ .Value }}
+{{ end }}
+{{ end }}
+
+*Actions Required:*
+{{ if eq .Status "firing" }}
+{{ if eq .CommonLabels.severity "critical" }}
+1. Onmiddellijk het incident response team contacteren
+2. Begin met root cause analysis
+3. Start mitigatie procedures volgens runbook
+{{ else if eq .CommonLabels.severity "warning" }}
+1. Onderzoek de oorzaak
+2. Evalueer impact op systeem
+3. Plan mitigatie acties indien nodig
+{{ else }}
+1. Monitor de situatie
+2. Update documentatie indien nodig
+{{ end }}
+{{ else }}
+1. Verifieer systeem status
+2. Update incident log
+3. Review preventieve maatregelen
+{{ end }}
+
+*Runbook:* {{ .CommonAnnotations.runbook_url }}
+{{ end }}
