@@ -1,56 +1,76 @@
 # Changelog
 
 ## [Unreleased]
+
 ### Added
+- Uitgebreide setup.md met:
+  - Gedetailleerde beveiligingsinstructies
+  - API key management richtlijnen
+  - Environment variables configuratie
+  - Productie deployment instructies
+  - Monitoring & logging setup
+- Nieuwe todo items voor:
+  - Test-Driven Development (TDD) implementatie
+  - Security scanning tools
+  - Code quality tools
+  - Performance monitoring
+  - Schaalbaarheidsoplossingen
+- Verbeterde documentatie structuur
+- Nieuwe security richtlijnen
+
+### Changed
+- Gereorganiseerde todo lijst met nieuwe fases:
+  - Fase 3: Security & Performance
+  - Fase 4: Monitoring & Logging
+  - Fase 5: Documentatie & Maintenance
+  - Fase 6: Performance Optimalisatie
+  - Fase 7: Schaalbaarheid
+- Bijgewerkte setup instructies
+- Verbeterde beveiligingsrichtlijnen
+
+### Security
+- Toegevoegde beveiligingsconfiguratie voor:
+  - API key management
+  - Environment variables
+  - Rate limiting
+  - CORS policies
+  - Error handling
+  - Security logging
+  - Dependency scanning
+
+## [1.0.0] - 2025-01-10
+
+### Added
+- Implementatie van uitgebreid authenticatie systeem:
+  - Email verificatie voor nieuwe accounts
+  - Wachtwoord reset functionaliteit
+  - Two-Factor Authentication (2FA)
+  - Sessie management
+  - Rate limiting
+  - Audit logging
+  - Security headers
+  - Input validatie
 - GitHub Actions workflow voor CI/CD
-- Verbeterde mapstructuur volgens documentatie
-- Basis GitHub workflow configuratie
-- Nieuwe todo items voor security en performance
-  - 2FA implementatie plan
-  - Rate limiting per user
-  - Server-side caching strategie
-  - CDN setup planning
-  - Error tracking systeem
-  - End-to-end testing framework
-- Initiële project setup
 - Basis documentatie structuur
-- Project requirements gedefinieerd
-- Uitgebreid database schema met:
-  - SEO modellen (SeoAudit, ContentItem)
-  - SEA modellen (Campaign, Ad, Keyword)
+- Database schema met:
+  - SEO modellen
+  - SEA modellen
   - Analytics modellen
   - Competitor analyse modellen
   - API integratie modellen
-  - Relevante enums en relaties
 
 ### Changed
-- Georganiseerde documentatie structuur
-- Bijgewerkte bestandsstructuur documentatie
-- Herstructurering van todo lijst met duidelijkere fases
-- Toegevoegde subtaken voor betere voortgangstracking
-- Uitgebreide database schema met meer gedetailleerde modellen
-
-### Deprecated
-- N/A
-
-### Removed
-- N/A
-
-### Fixed
-- N/A
+- User model uitgebreid met auth functionaliteit
+- Verbeterde sessie handling
+- Georganiseerde documentatie
+- Herstructurering van todo lijst
 
 ### Security
-- Toegevoegde .gitignore regels
-- Beveiligde workflow configuratie
-- Geplande security verbeteringen (2FA, rate limiting)
-- API key management systeem toegevoegd
-
-## [0.1.0] - 2025-01-10
-### Added
-- Project initialisatie
-- Basis documentatie structuur opgezet
-- README.md met project overview
-- Technische setup documentatie
-- Todo lijst
-- Suggesties document
-- Changelog
+- Implementatie van:
+  - 2FA systeem
+  - Rate limiting
+  - Security headers
+  - Input validatie
+  - Token management
+  - Session security
+  - Audit logging

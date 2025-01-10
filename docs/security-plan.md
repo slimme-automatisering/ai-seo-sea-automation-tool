@@ -1,55 +1,102 @@
 # Security Plan Documentation
 
 ## 1. Authentication
-- **OAuth 2.0:** For Admin and Manager roles, allowing login via Google accounts.
-- **2FA (Two-Factor Authentication):** An additional security layer for all roles.
-- **JWT (JSON Web Tokens):** For secure session management.
+### Email & Password Authentication
+- **Email Verificatie:** Verplichte email verificatie voor nieuwe accounts
+- **Wachtwoord Reset:** Veilige wachtwoord reset functionaliteit met tijdelijke tokens
+- **Wachtwoord Opslag:** Bcrypt hashing met salt rounds voor veilige wachtwoord opslag
+
+### Two-Factor Authentication (2FA)
+- **TOTP-based 2FA:** Implementatie van Time-based One-Time Password (TOTP)
+- **Backup Codes:** Generatie van 10 unieke backup codes voor noodgevallen
+- **QR Code Support:** QR code generatie voor eenvoudige 2FA setup
+
+### Session Management
+- **JWT Tokens:** Secure JSON Web Tokens voor authenticatie
+- **Session Tracking:** Tracking van user-agent en IP adres
+- **Auto-Cleanup:** Automatische opruiming van verlopen sessies
+- **Tijdelijke Tokens:** Speciale tijdelijke tokens voor 2FA verificatie
 
 ## 2. Authorization
 - **Role-Based Access Control (RBAC):**
-  - **Admin:** Full access to all features and data.
-  - **Manager:** Access to campaigns, ads, and analytics.
-  - **User:** Access to content creation and product optimization.
+  - **Admin:** Volledige toegang tot alle features en data
+  - **Manager:** Toegang tot campagnes, advertenties en analytics
+  - **User:** Toegang tot content creatie en product optimalisatie
 
 ## 3. Data Encryption
-- **At Rest:** Encrypt sensitive data (e.g., passwords, payment info) using AES-256.
-- **In Transit:** Use HTTPS with TLS 1.2 or higher for secure communication.
+- **At Rest:** 
+  - AES-256 encryptie voor gevoelige data
+  - Bcrypt hashing voor wachtwoorden
+  - Secure opslag van 2FA secrets
+- **In Transit:** HTTPS met TLS 1.2 of hoger
 
 ## 4. Input Validation
-- **Sanitization:** Sanitize user inputs to prevent SQL injection and XSS attacks.
-- **Validation:** Validate inputs using libraries like `validator.js`.
+- **Sanitization:** Sanitize user inputs om SQL injectie en XSS attacks te voorkomen
+- **Validation:** Input validatie met validator.js
+- **Token Validatie:** Strikte validatie van verificatie en reset tokens
 
 ## 5. Rate Limiting
-- **API Rate Limiting:** Implement rate limiting to prevent abuse of APIs.
-- **IP Blocking:** Block IPs that exceed rate limits or show suspicious activity.
+- **API Rate Limiting:** 
+  - Globale rate limiting per IP
+  - Specifieke limieten voor auth endpoints
+  - Progressieve rate limiting bij herhaalde foute pogingen
+- **IP Blocking:** Blokkeren van IPs die limieten overschrijden
 
 ## 6. Security Headers
-- **Helmet:** Use Helmet to set HTTP security headers (e.g., Content Security Policy, X-Frame-Options).
+- **Helmet:** HTTP security headers:
+  - Content Security Policy
+  - X-Frame-Options
+  - X-XSS-Protection
+  - Strict-Transport-Security
+  - Referrer-Policy
 
 ## 7. Audit Logging
-- **Logging:** Log all user actions and API requests for auditing purposes.
-- **Monitoring:** Use Prometheus and Grafana to monitor logs in real-time.
+- **Authentication Logging:**
+  - Login pogingen (succesvol en mislukt)
+  - 2FA activaties en verificaties
+  - Wachtwoord reset aanvragen
+  - Email verificaties
+- **Session Logging:**
+  - Sessie creatie en verloop
+  - IP adressen en user-agents
+  - Verdachte activiteiten
 
-## 8. Spam and Bot Protection
-- **reCAPTCHA:** Use reCAPTCHA to prevent spam and bot activity.
-- **Bot Detection:** Use tools like Cloudflare Bot Management to detect and block bots.
+## 8. Spam en Bot Protection
+- **reCAPTCHA:** Implementatie bij gevoelige endpoints
+- **Rate Limiting:** Specifieke limieten voor auth endpoints
+- **Verdachte Activiteit Detectie:** Monitoring van login patronen
 
 ## 9. DDoS Prevention
-- **Cloudflare:** Use Cloudflare to mitigate DDoS attacks.
-- **Rate Limiting:** Implement rate limiting at the application level.
+- **Cloudflare:** DDoS mitigatie
+- **Rate Limiting:** Application-level rate limiting
+- **Session Management:** Efficiënte sessie handling
 
 ## 10. Fraud Detection
-- **Machine Learning:** Use machine learning models to detect fraudulent activities (e.g., fake accounts, payment fraud).
-- **Alerts:** Set up alerts for suspicious activities.
+- **Machine Learning:**
+  - Detectie van verdachte login patronen
+  - Identificatie van mogelijke account overnames
+- **Alerts:** Real-time alerts voor verdachte activiteiten
 
 ## 11. Compliance
-- **GDPR:** Ensure compliance with GDPR for user data protection.
-- **PCI DSS:** Ensure compliance with PCI DSS for payment processing.
+- **GDPR:**
+  - Veilige opslag van gebruikersdata
+  - Data minimalisatie principes
+  - Recht op vergetelheid implementatie
+- **PCI DSS:** Veilige verwerking van betalingsgegevens
 
 ## 12. Incident Response
-- **Incident Response Plan:** Document steps to handle security incidents (e.g., data breaches, DDoS attacks).
-- **Communication Plan:** Notify stakeholders and users in case of a security incident.
+- **Incident Response Plan:**
+  - Procedures voor verschillende security incidenten
+  - Escalatie procedures
+  - Recovery procedures
+- **Communication Plan:**
+  - Gebruiker notificaties
+  - Stakeholder communicatie
 
 ## 13. Security Testing
-- **Penetration Testing:** Perform regular penetration testing to identify vulnerabilities.
-- **Vulnerability Scanning:** Use tools like Snyk to scan for vulnerabilities in dependencies.
+- **Penetration Testing:**
+  - Regelmatige security audits
+  - Focus op auth systeem
+- **Vulnerability Scanning:**
+  - Dependency scanning met Snyk
+  - Regular security updates

@@ -28,7 +28,72 @@
 - PostgreSQL 14+
 - Redis 6+
 
-## Lokale Ontwikkelomgeving Opzetten
+## Beveiliging & Configuratie
+
+### 1. Environment Variables
+Maak een `.env` bestand aan in zowel de frontend als backend directory. Gebruik de `.env.example` bestanden als template.
+
+#### Frontend (.env.local):
+```
+NEXT_PUBLIC_API_URL=http://localhost:3001
+NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=
+# Voeg NOOIT geheime keys toe aan frontend environment variables
+```
+
+#### Backend (.env):
+```
+# Server Configuration
+PORT=3001
+NODE_ENV=development
+API_VERSION=v1
+
+# Database Configuration
+DATABASE_URL=postgresql://user:password@localhost:5432/seo_tool
+REDIS_URL=redis://localhost:6379
+
+# Security
+JWT_SECRET=your-secure-jwt-secret
+JWT_EXPIRATION=24h
+REFRESH_TOKEN_SECRET=your-secure-refresh-token
+REFRESH_TOKEN_EXPIRATION=7d
+
+# API Keys (Gebruik sterke, unieke keys in productie)
+GOOGLE_ADS_API_KEY=
+AHREFS_API_KEY=
+SEMRUSH_API_KEY=
+
+# Rate Limiting
+RATE_LIMIT_WINDOW=15m
+RATE_LIMIT_MAX_REQUESTS=100
+
+# Email Service
+SMTP_HOST=
+SMTP_PORT=
+SMTP_USER=
+SMTP_PASS=
+```
+
+### 2. API Key Management
+- Gebruik nooit API keys direct in de code
+- Sla API keys veilig op in environment variables
+- Roteer API keys regelmatig
+- Implementeer key versioning voor smooth transitions
+- Monitor API key usage voor security alerts
+
+### 3. Beveiligingsrichtlijnen
+- Implementeer rate limiting per endpoint
+- Gebruik HTTPS voor alle verbindingen
+- Implementeer proper CORS policies
+- Valideer alle user input
+- Implementeer proper error handling
+- Log security events voor monitoring
+- Scan dependencies regelmatig op vulnerabilities
+- Gebruik prepared statements voor database queries
+- Implementeer proper session management
+- Gebruik secure headers (Helmet)
+- Implementeer CSP policies
+
+## Lokale Ontwikkelomgeving
 
 ### 1. Repository Klonen
 ```bash
@@ -36,26 +101,7 @@ git clone https://github.com/[username]/ai-seo-sea-automation-tool.git
 cd ai-seo-sea-automation-tool
 ```
 
-### 2. Environment Variables
-Maak een `.env` bestand aan in zowel de frontend als backend directory:
-
-Frontend (.env.local):
-```
-NEXT_PUBLIC_API_URL=http://localhost:3001
-NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=
-```
-
-Backend (.env):
-```
-PORT=3001
-DATABASE_URL=postgresql://user:password@localhost:5432/seo_tool
-REDIS_URL=redis://localhost:6379
-JWT_SECRET=your_jwt_secret
-OPENAI_API_KEY=your_openai_key
-GOOGLE_ADS_CLIENT_ID=your_client_id
-```
-
-### 3. Dependencies Installeren
+### 2. Dependencies Installeren
 ```bash
 # Frontend
 cd frontend
@@ -66,47 +112,49 @@ cd ../backend
 npm install
 ```
 
-### 4. Database Setup
+### 3. Databases Opzetten
 ```bash
-# Start PostgreSQL en Redis via Docker
-docker-compose up -d
+# PostgreSQL database aanmaken
+createdb seo_tool
 
-# Run migrations
-cd backend
-npm run migrate
+# Redis server starten
+redis-server
 ```
 
-### 5. Development Servers Starten
+### 4. Development Servers Starten
 ```bash
-# Frontend (http://localhost:3000)
+# Frontend development server
 cd frontend
 npm run dev
 
-# Backend (http://localhost:3001)
-cd backend
+# Backend development server
+cd ../backend
 npm run dev
 ```
 
 ## Productie Deployment
 
-### Frontend (Vercel)
-1. Fork de repository
-2. Maak een nieuw project aan op Vercel
-3. Verbind met de GitHub repository
-4. Configureer environment variables
-5. Deploy
+### 1. Frontend (Vercel)
+- Push changes naar main branch
+- Vercel zal automatisch deployen
+- Controleer build logs voor errors
+- Verifieer deployment success
 
-### Backend (DigitalOcean)
-1. Maak een nieuwe Droplet aan
-2. Setup Docker en Docker Compose
-3. Clone repository
-4. Configureer environment variables
-5. Run `docker-compose -f docker-compose.prod.yml up -d`
+### 2. Backend (DigitalOcean)
+- Push changes naar main branch
+- GitHub Actions triggert deployment
+- Controleer deployment status
+- Monitor server health
 
-## Security Best Practices
-- Gebruik HTTPS
-- Implementeer rate limiting
-- Sla wachtwoorden op met bcrypt
-- Gebruik JWT voor authenticatie
-- Implementeer CORS policies
-- Regular security audits
+### 3. Database Migraties
+```bash
+# Run database migraties
+npm run migrate
+```
+
+## Monitoring & Logging
+- Gebruik logging voor debugging
+- Monitor server resources
+- Track API performance
+- Monitor database queries
+- Check security logs

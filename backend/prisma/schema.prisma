@@ -12,17 +12,38 @@ datasource db {
 
 // Basis modellen
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
-  password      String
-  name          String?
-  role          Role      @default(USER)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  websites      Website[]
-  organization  Organization? @relation(fields: [orgId], references: [id])
-  orgId         String?
-  aiCredits     Int       @default(0)
+  id                  String    @id @default(cuid())
+  email               String    @unique
+  password            String
+  name                String?
+  role                Role      @default(USER)
+  emailVerified       Boolean   @default(false)
+  verificationToken   String?   @unique
+  verificationExpires DateTime?
+  resetPasswordToken  String?   @unique
+  resetPasswordExpires DateTime?
+  twoFactorSecret     String?
+  twoFactorEnabled    Boolean   @default(false)
+  backupCodes         String[]  @default([])
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  websites            Website[]
+  organization        Organization? @relation(fields: [orgId], references: [id])
+  orgId               String?
+  aiCredits           Int       @default(0)
+  sessions            Session[]
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String
+  token        String   @unique
+  userAgent    String?
+  ipAddress    String?
+  lastActivity DateTime @default(now())
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
 }
 
 model Organization {
