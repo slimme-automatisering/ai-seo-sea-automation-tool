@@ -1,58 +1,62 @@
 # File Structure
 
-``` mermaid
+````mermaid
 ai-seo-sea-automation-tool/
 ├── .github/
 │   └── workflows/
 │       └── ci.yml
 ├── docs/
-│   ├── prd.md                   # Product Requirements Document
-│   ├── frontend.md              # Frontend Documentation
-│   ├── backend.md               # Backend Documentation
-│   ├── third-party-libraries.md # Third-Party Libraries Documentation
-│   ├── devops.md                # DevOps Documentation
-│   ├── testing-plan.md          # Testing Plan Documentation
-│   ├── security-plan.md         # Security Plan Documentation
-│   ├── user-flow.md             # User Flow Documentation
-│   ├── code-documentation.md    # Code Documentation
-│   ├── database-schema.md       # Database Schema Documentation
-│   ├── state-management.md      # State Management Documentation
+│   ├── prd.md                      # Product Requirements Document
+│   ├── frontend.md                 # Frontend Documentation
+│   ├── backend.md                  # Backend Documentation
+│   ├── third-party-libraries.md    # Third-Party Libraries Documentation
+│   ├── devops.md                   # DevOps Documentation
+│   ├── testing-plan.md             # Testing Plan Documentation
+│   ├── security-plan.md            # Security Plan Documentation
+│   ├── user-flow.md                # User Flow Documentation
+│   ├── code-documentation.md       # Code Documentation
+│   ├── database-schema.md          # Database Schema Documentation
+│   ├── state-management.md         # State Management Documentation
 │   ├── performance-optimization.md # Performance Optimization Documentation
-│   ├── api.md                   # API Documentation
-├── README.md                    # Project overview and setup instructions
-├── .windsurfrules              # Windsurf AI Assistant regels
+│   ├── api.md                      # API Documentation
+├── backend/
+│   ├── src/
+│   │   ├── config/                 # Configuration files (e.g., database, environment variables)
+│   │   ├── controllers/            # Request handlers (e.g., user, campaign, content)
+│   │   ├── models/                 # Database models (e.g., User, Campaign, Content)
+│   │   ├── routes/                 # API routes (e.g., REST, GraphQL)
+│   │   ├── services/               # Business logic (e.g., AI processing, third-party integrations)
+│   │   ├── utils/                  # Utility functions (e.g., authentication, caching)
+│   │   ├── middleware/             # Middleware (e.g., rate limiting, input validation)
+│   │   ├── types/                  # TypeScript type definitions
+│   │   └── prisma/                 # Prisma schema en migraties
+│   ├── tests/                      # Test files (e.g., unit tests, integration tests)
+│   ├── server.ts                   # Server entry point
+│   ├── Dockerfile.dev              # Development Docker configuratie
+│   ├── .env                        # Environment variables
+│   ├── package.json                # Dependencies and scripts
+│   ├── tsconfig.json               # TypeScript configuratie
+├── frontend/
+│   ├── public/                     # Static assets (e.g., images, favicon)
+│   ├── src/
+│   │   ├── components/             # Reusable UI components (e.g., buttons, cards)
+│   │   ├── pages/                  # Page components (e.g., Dashboard, SEO, SEA)
+│   │   ├── styles/                 # Global styles and themes
+│   │   ├── utils/                  # Utility functions (e.g., API calls, form validation)
+│   │   ├── store/                  # Redux store and slices
+│   │   ├── hooks/                  # Custom React hooks
+│   │   └── types/                  # TypeScript type definitions
+│   ├── tests/                      # Test files (e.g., unit tests, integration tests)
+│   ├── server.ts                   # Server entry point
+│   ├── App.tsx                     # Main app component
+│   ├── index.tsx                   # Entry point
+│   ├── .env                        # Environment variables
+│   ├── package.json                # Dependencies and scripts
+│   ├── tsconfig.json               # TypeScript configuratie
+├── README.md                       # Project overview and setup instructions
+├── .windsurfrules                  # Windsurf AI Assistant regels
 ├── ai-seo-sea-automation-tool.code-workspace # VS Code workspace configuratie
-backend/
-├── config/                  # Configuration files (e.g., database, environment variables)
-├── controllers/             # Request handlers (e.g., user, campaign, content)
-├── models/                  # Database models (e.g., User, Campaign, Content)
-├── routes/                  # API routes (e.g., REST, GraphQL)
-├── services/               # Business logic (e.g., AI processing, third-party integrations)
-├── utils/                  # Utility functions (e.g., authentication, caching)
-├── middleware/             # Middleware (e.g., rate limiting, input validation)
-├── tests/                  # Test files (e.g., unit tests, integration tests)
-├── types/                  # TypeScript type definitions
-├── prisma/                 # Prisma schema en migraties
-├── server.ts               # Server entry point
-├── Dockerfile.dev          # Development Docker configuratie
-├── .env                    # Environment variables
-├── package.json            # Dependencies and scripts
-├── tsconfig.json          # TypeScript configuratie
-frontend/
-├── public/                # Static assets (e.g., images, favicon)
-├── src/
-│   ├── components/        # Reusable UI components (e.g., buttons, cards)
-│   ├── pages/            # Page components (e.g., Dashboard, SEO, SEA)
-│   ├── styles/           # Global styles and themes
-│   ├── utils/            # Utility functions (e.g., API calls, form validation)
-│   ├── store/            # Redux store and slices
-│   ├── hooks/            # Custom React hooks
-│   ├── types/            # TypeScript type definitions
-│   ├── App.tsx           # Main app component
-│   ├── index.tsx         # Entry point
-├── .env                  # Environment variables
-├── package.json          # Dependencies and scripts
-├── tsconfig.json        # TypeScript configuratie
+
 
 # Project Bestandsstructuur
 
@@ -89,10 +93,10 @@ graph TD
     Root --> README[README.md]
     Root --> Workspace[.code-workspace]
     Root --> Rules[.windsurfrules]
-    
+
     Github --> Workflows[workflows]
     Workflows --> CICD[ci.yml]
-    
+
     Docs --> PRD[prd.md]
     Docs --> FrontDoc[frontend.md]
     Docs --> BackDoc[backend.md]
@@ -106,7 +110,7 @@ graph TD
     Docs --> StateDoc[state-management.md]
     Docs --> PerfDoc[performance-optimization.md]
     Docs --> ApiDoc[api.md]
-    
+
     Backend --> BackConfig[config]
     Backend --> BackControllers[controllers]
     Backend --> BackModels[models]
@@ -122,13 +126,13 @@ graph TD
     Backend --> BackEnv[.env]
     Backend --> BackPackage[package.json]
     Backend --> BackTS[tsconfig.json]
-    
+
     Frontend --> FrontPublic[public]
     Frontend --> FrontSrc[src]
     Frontend --> FrontEnv[.env]
     Frontend --> FrontPackage[package.json]
     Frontend --> FrontTS[tsconfig.json]
-    
+
     FrontSrc --> Components[components]
     FrontSrc --> Pages[pages]
     FrontSrc --> Styles[styles]
@@ -138,9 +142,10 @@ graph TD
     FrontSrc --> Types[types]
     FrontSrc --> App[App.tsx]
     FrontSrc --> Index[index.tsx]
-```
+````
 
 ## Mermaid Left-Right weergave
+
 ```mermaid
 graph LR
     Root[ai-seo-sea-automation-tool]
@@ -148,22 +153,22 @@ graph LR
     Root --> FE[Frontend]
     Root --> BE[Backend]
     Root --> Docs[Documentation]
-    
+
     Config --> GH[.github/workflows]
     Config --> WS[.code-workspace]
     Config --> Rules[.windsurfrules]
-    
+
     Docs --> API[API Docs]
     Docs --> Setup[Setup Docs]
     Docs --> Security[Security Docs]
     Docs --> Performance[Performance Docs]
-    
+
     FE --> UI[UI Components]
     FE --> State[State Management]
     FE --> Pages[Pages]
     FE --> Hooks[Custom Hooks]
     FE --> Types[TypeScript Types]
-    
+
     BE --> Controllers[Controllers]
     BE --> Services[Services]
     BE --> Models[Data Models]

@@ -1,0 +1,106 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Gebruikers en authenticatie
+model User {
+  id            String     @id @default(uuid())
+  email         String     @unique
+  name          String
+  googleId      String?    @unique // Voor OAuth
+  passwordHash  String?    // Optioneel voor OAuth gebruikers
+  role          Role       @default(USER)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  campaigns     Campaign[]
+  refreshTokens RefreshToken[]
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+// SEO en SEA campagnes
+model Campaign {
+  id          String    @id @default(uuid())
+  name        String
+  type        CampaignType
+  budget      Float
+  status      Status    @default(DRAFT)
+  startDate   DateTime
+  endDate     DateTime?
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
+  keywords    Keyword[]
+  content     Content[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Keyword {
+  id         String    @id @default(uuid())
+  word       String
+  volume     Int?      // Zoekvolume
+  difficulty Float?    // SEO moeilijkheidsgraad
+  cpc        Float?    // Cost per click
+  position   Int?      // Huidige ranking positie
+  campaign   Campaign  @relation(fields: [campaignId], references: [id])
+  campaignId String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model Content {
+  id          String      @id @default(uuid())
+  type        ContentType
+  title       String
+  content     String      @db.Text
+  status      Status      @default(DRAFT)
+  campaign    Campaign    @relation(fields: [campaignId], references: [id])
+  campaignId  String
+  seoScore    Float?      // SEO score van de content
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+// Enums
+enum Role {
+  ADMIN
+  MANAGER
+  USER
+}
+
+enum Status {
+  DRAFT
+  ACTIVE
+  PAUSED
+  COMPLETED
+  ARCHIVED
+}
+
+enum CampaignType {
+  SEO
+  SEA
+  COMBINED
+}
+
+enum ContentType {
+  BLOG_POST
+  LANDING_PAGE
+  PRODUCT_DESCRIPTION
+  META_DESCRIPTION
+  ALT_TEXT
+}

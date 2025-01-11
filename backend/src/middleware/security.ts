@@ -1,162 +1,135 @@
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import cors from 'cors';
-import { Logger } from '../utils/Logger';
+import hpp from 'hpp';
+import { expressCspHeader, INLINE, NONE, SELF } from 'express-csp-header';
+import sanitize from 'express-mongo-sanitize';
+import jwt from 'jsonwebtoken';
 
-const logger = new Logger('SecurityMiddleware');
+// Extend Request type to include user
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        id: string;
+        email: string;
+        role: string;
+      };
+    }
+  }
+}
+
+// Rate limiting configuratie
+export const rateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minuten
+  max: 100, // max 100 requests per IP
+  message: 'Te veel requests van dit IP adres, probeer het later opnieuw',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 // CORS configuratie
 const corsOptions = {
-    origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    exposedHeaders: ['Content-Range', 'X-Content-Range'],
-    credentials: true,
-    maxAge: 86400 // 24 uur
+  origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range'],
+  credentials: true,
+  maxAge: 600, // 10 minuten
 };
 
 // CSP configuratie
-const cspOptions = {
-    directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        imgSrc: ["'self'", 'data:', 'https:'],
-        connectSrc: ["'self'", 'https://api.openai.com', 'https://api.semrush.com', 'https://api.ahrefs.com'],
-        fontSrc: ["'self'", 'https:', 'data:'],
-        objectSrc: ["'none'"],
-        mediaSrc: ["'self'"],
-        frameSrc: ["'none'"]
-    }
+const cspConfig = {
+  directives: {
+    'default-src': [SELF],
+    'script-src': [SELF, INLINE],
+    'style-src': [SELF, INLINE],
+    'img-src': [SELF, 'data:', 'https:'],
+    'font-src': [SELF, 'https:', 'data:'],
+    'object-src': [NONE],
+    'connect-src': [SELF, 'https://api.seo-sea-tool.com'],
+  },
 };
 
-// Security headers middleware
-export const securityHeaders = [
-    // Basis security headers
-    helmet(),
-    
-    // CORS
-    cors(corsOptions),
-    
-    // Content Security Policy
-    helmet.contentSecurityPolicy(cspOptions),
-    
-    // Voorkom clickjacking
-    helmet.frameguard({ action: 'deny' }),
-    
-    // XSS protection
-    helmet.xssFilter(),
-    
-    // Voorkom MIME type sniffing
-    helmet.noSniff(),
-    
-    // HSTS
-    helmet.hsts({
-        maxAge: 31536000,
-        includeSubDomains: true,
-        preload: true
-    }),
-    
-    // Verberg powered-by header
-    helmet.hidePoweredBy(),
-    
-    // Voorkom IE van het uitvoeren van downloads in context van site
-    helmet.ieNoOpen(),
-    
-    // DNS prefetch control
-    helmet.dnsPrefetchControl({ allow: false })
+// Security middleware
+export const securityMiddleware = [
+  // Basis security headers
+  helmet({
+    contentSecurityPolicy: false, // We gebruiken express-csp-header
+  }),
+  
+  // CORS
+  cors(corsOptions),
+  
+  // Content Security Policy
+  expressCspHeader(cspConfig),
+  
+  // Parameter pollution bescherming
+  hpp(),
+  
+  // NoSQL injectie bescherming
+  sanitize(),
+  
+  // XSS bescherming
+  (req: Request, res: Response, next: NextFunction) => {
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    next();
+  },
+  
+  // Clickjacking bescherming
+  (req: Request, res: Response, next: NextFunction) => {
+    res.setHeader('X-Frame-Options', 'DENY');
+    next();
+  },
+  
+  // MIME sniffing bescherming
+  (req: Request, res: Response, next: NextFunction) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    next();
+  },
+  
+  // HSTS
+  (req: Request, res: Response, next: NextFunction) => {
+    if (req.secure) {
+      res.setHeader(
+        'Strict-Transport-Security',
+        'max-age=31536000; includeSubDomains; preload'
+      );
+    }
+    next();
+  },
 ];
 
-// Request sanitization middleware
-export const sanitizeRequest = (req: Request, res: Response, next: NextFunction) => {
-    try {
-        // Sanitize body
-        if (req.body) {
-            Object.keys(req.body).forEach(key => {
-                if (typeof req.body[key] === 'string') {
-                    req.body[key] = sanitizeString(req.body[key]);
-                }
-            });
-        }
-
-        // Sanitize query parameters
-        if (req.query) {
-            Object.keys(req.query).forEach(key => {
-                if (typeof req.query[key] === 'string') {
-                    req.query[key] = sanitizeString(req.query[key] as string);
-                }
-            });
-        }
-
-        // Sanitize URL parameters
-        if (req.params) {
-            Object.keys(req.params).forEach(key => {
-                if (typeof req.params[key] === 'string') {
-                    req.params[key] = sanitizeString(req.params[key]);
-                }
-            });
-        }
-
-        next();
-    } catch (error) {
-        logger.error('Error sanitizing request:', error);
-        res.status(400).json({
-            success: false,
-            error: 'Ongeldige input gedetecteerd'
-        });
+// JWT authenticatie middleware
+export const authMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    
+    if (!token) {
+      return res.status(401).json({ message: 'Geen token aanwezig' });
     }
+    
+    // Token verificatie
+    const decoded = await verifyToken(token);
+    req.user = decoded;
+    
+    next();
+  } catch (error) {
+    return res.status(401).json({ message: 'Ongeldige token' });
+  }
 };
 
-// SQL injection prevention middleware
-export const preventSqlInjection = (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const sqlInjectionPattern = /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|UNION|ALTER|CREATE|TRUNCATE)\b)/i;
-        
-        const checkForSqlInjection = (value: string): boolean => {
-            return sqlInjectionPattern.test(value);
-        };
-
-        // Check body
-        if (req.body) {
-            Object.values(req.body).forEach(value => {
-                if (typeof value === 'string' && checkForSqlInjection(value)) {
-                    throw new Error('SQL injection gedetecteerd');
-                }
-            });
-        }
-
-        // Check query parameters
-        if (req.query) {
-            Object.values(req.query).forEach(value => {
-                if (typeof value === 'string' && checkForSqlInjection(value)) {
-                    throw new Error('SQL injection gedetecteerd');
-                }
-            });
-        }
-
-        // Check URL parameters
-        if (req.params) {
-            Object.values(req.params).forEach(value => {
-                if (typeof value === 'string' && checkForSqlInjection(value)) {
-                    throw new Error('SQL injection gedetecteerd');
-                }
-            });
-        }
-
-        next();
-    } catch (error) {
-        logger.error('SQL injection attempt detected:', error);
-        res.status(400).json({
-            success: false,
-            error: 'Ongeldige input gedetecteerd'
-        });
-    }
+// Token verificatie functie
+const verifyToken = async (token: string) => {
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
+    return decoded;
+  } catch (error) {
+    throw new Error('Token verificatie mislukt');
+  }
 };
-
-// Helper functie voor string sanitization
-function sanitizeString(str: string): string {
-    return str
-        .replace(/[<>]/g, '') // Verwijder HTML tags
-        .replace(/['"]/g, '') // Verwijder quotes
-        .trim(); // Verwijder whitespace
-}

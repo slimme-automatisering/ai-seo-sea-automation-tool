@@ -6,13 +6,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "jest",
-    "test:e2e": "cypress open",
-    "test:e2e:headless": "cypress run",
+    "test": "jest --config config/jest.config.js",
+    "test:e2e": "cypress open --config-file config/cypress.config.ts",
+    "test:e2e:headless": "cypress run --config-file config/cypress.config.ts",
     "lint": "eslint . --ext .ts,.tsx",
     "format": "prettier --write .",
     "security:audit": "npm audit fix && npm audit",
-    "deps:update": "npm update"
+    "deps:update": "npm update",
+    "sonar": "sonar-scanner -Dproject.settings=config/sonar-project.properties"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",
