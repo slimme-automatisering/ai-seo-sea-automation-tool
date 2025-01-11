@@ -1,6 +1,7 @@
 # Todo List
 
 ## Hoge Prioriteit
+
 - [x] MongoDB schema's definiëren voor analytics en logs
 - [ ] Prisma migraties aanmaken en uitvoeren
 - [ ] Database seeding scripts maken voor development
@@ -8,6 +9,7 @@
 - [ ] Setup error logging systeem
 
 ## Normale Prioriteit
+
 - [ ] Redis caching implementeren voor API responses
 - [x] MongoDB indexen optimaliseren
 - [ ] Database backup systeem opzetten
@@ -17,11 +19,13 @@
 - [ ] Setup CI/CD pipeline
 
 ## Lage Prioriteit
+
 - [ ] Documenteer alle API endpoints
 - [ ] Voeg performance monitoring toe
 - [ ] Setup development guidelines
 
 ## Completed ✅
+
 - [x] PostgreSQL schema definiëren met Prisma
 - [x] Database configuratie setup (PostgreSQL, MongoDB, Redis)
 - [x] Frontend authentication context met OAuth 2.0
@@ -30,3 +34,4 @@
 - [x] Basis project structuur
 - [x] MongoDB schema's en types
 - [x] MongoDB indexen en configuratie
+- [x] PostgreSQL installatie guide toegevoegd

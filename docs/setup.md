@@ -3,6 +3,8 @@
 ## Database Setup
 
 ### PostgreSQL
+Voor gedetailleerde PostgreSQL installatie instructies, zie [postgresql-setup.md](./postgresql-setup.md)
+
 1. Installeer PostgreSQL
 2. Maak een nieuwe database aan: `ai_seo_sea_db`
 3. Setup environment variabelen in `.env`:
@@ -15,6 +17,7 @@
    ```
 
 ### MongoDB
+
 1. Installeer MongoDB
 2. Setup environment variabelen:
    ```env
@@ -24,6 +27,7 @@
 3. MongoDB collecties worden automatisch aangemaakt
 
 ### Redis
+
 1. Installeer Redis
 2. Setup environment variabelen:
    ```env
@@ -31,6 +35,7 @@
    ```
 
 ## OAuth 2.0 Setup
+
 1. Maak een Google Cloud project aan
 2. Setup OAuth 2.0 credentials
 3. Voeg environment variabelen toe:
@@ -41,6 +46,7 @@
    ```
 
 ## Development Workflow
+
 1. Clone repository
 2. Install dependencies:
    ```bash
@@ -48,20 +54,23 @@
    ```
 3. Setup alle environment variabelen
 4. Start development servers:
+
    ```bash
    # Frontend
    cd frontend && npm run dev
-   
+
    # Backend
    cd backend && npm run dev
    ```
 
 ## Testing
+
 - Unit tests: `npm test`
 - Integration tests: `npm run test:integration`
 - E2E tests: `npm run test:e2e`
 
 ## Deployment (TODO)
+
 - CI/CD setup
 - Production build process
 - Deployment instructies
