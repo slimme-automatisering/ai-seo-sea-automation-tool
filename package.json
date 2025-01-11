@@ -26,6 +26,7 @@
     "bull": "^4.16.5",
     "compression": "^1.7.5",
     "cors": "^2.8.5",
+    "critters-webpack-plugin": "^2.5.0",
     "express": "^4.21.2",
     "express-csp-header": "^5.2.1",
     "express-mongo-sanitize": "^2.2.0",

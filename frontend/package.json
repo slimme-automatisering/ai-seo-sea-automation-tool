@@ -25,11 +25,13 @@
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^9.0.4",
+    "react-router-dom": "^7.1.1",
     "redux-persist": "^6.0.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.1.6",
     "@testing-library/react": "^14.1.2",
+    "@types/bcrypt": "^5.0.2",
     "@types/jest": "^29.5.11",
     "@types/node": "^20.11.0",
     "@types/react": "^18.2.47",

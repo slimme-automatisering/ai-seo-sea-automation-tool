@@ -21,13 +21,22 @@ app.use(rateLimit(RATE_LIMIT));
 app.use('/api/auth', authRoutes);
 
 // Error handling
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   console.error(err.stack);
   res.status(500).json({ message: 'Er is een interne serverfout opgetreden' });
 });
 
 const PORT = process.env.PORT || 3001;
 
-app.listen(PORT, () => {
-  console.log(`Server draait op poort ${PORT}`);
-});
+export const startServer = async () => {
+  try {
+    app.listen(PORT, () => {
+      console.log(`Server draait op poort ${PORT}`);
+    });
+  } catch (error) {
+    console.error('Server opstartfout:', error);
+    throw error;
+  }
+};
+
+export default app;

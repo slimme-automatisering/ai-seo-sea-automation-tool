@@ -1,20 +1,13 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import { SEODashboard } from '../../components/seo/SEODashboard'
+import React from 'react';
+import { Container } from '@mui/material';
+import SEODashboard from '../../components/seo/SEODashboard';
 
-const SEOPage: NextPage = () => {
+const SEOPage: React.FC = () => {
   return (
-    <div>
-      <Head>
-        <title>SEO Dashboard - AI SEO & SEA Tool</title>
-        <meta name="description" content="AI-powered SEO optimization dashboard" />
-      </Head>
+    <Container maxWidth="lg">
+      <SEODashboard />
+    </Container>
+  );
+};
 
-      <main>
-        <SEODashboard />
-      </main>
-    </div>
-  )
-}
-
-export default SEOPage
+export default SEOPage;

@@ -1,14 +1,21 @@
-import type { AppProps } from 'next/app'
-import { Provider } from 'react-redux'
-import { store } from '../store'
-import '../styles/globals.css'
+import React from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { store } from '../store';
+import AppRoutes from '../routes';
+import { AuthProvider } from '../context/AuthContext';
+import '../styles/globals.css';
 
-function MyApp({ Component, pageProps }: AppProps) {
+const App: React.FC = () => {
   return (
     <Provider store={store}>
-      <Component {...pageProps} />
+      <AuthProvider>
+        <Router>
+          <AppRoutes />
+        </Router>
+      </AuthProvider>
     </Provider>
-  )
-}
+  );
+};
 
-export default MyApp
+export default App;
