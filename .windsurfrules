@@ -7,6 +7,59 @@ config:
   documentation_path: "/docs"
   version_control: "git"
 
+# Veilige werkwijze voor wijzigingen
+safe_changes:
+  pre_change_checks:
+    - action: "view_current_state"
+      steps:
+        - "Bekijk huidige bestand met view_file"
+        - "Analyseer de bestaande structuur"
+        - "Identificeer wat er echt moet veranderen"
+    
+    - action: "make_plan"
+      steps:
+        - "Maak een concreet plan voor wijzigingen"
+        - "Focus op kleine, gerichte aanpassingen"
+        - "Voorkom onnodige herstructurering"
+    
+    - action: "verify_impact"
+      steps:
+        - "Check gerelateerde bestanden"
+        - "Beoordeel impact op andere delen"
+        - "Valideer of wijzigingen nodig zijn"
+
+  change_workflow:
+    - step: "single_file_focus"
+      rules:
+        - "Werk met één bestand tegelijk"
+        - "Maak wijzigingen in kleine stappen"
+        - "Commit na elke betekenisvolle wijziging"
+    
+    - step: "review_changes"
+      rules:
+        - "Controleer wijzigingen voor commit"
+        - "Verifieer dat originele functionaliteit behouden blijft"
+        - "Check op onbedoelde wijzigingen"
+    
+    - step: "documentation_update"
+      rules:
+        - "Update gerelateerde documentatie"
+        - "Houd changelog bij"
+        - "Voeg TODO items toe indien nodig"
+
+  error_prevention:
+    - rule: "ask_when_unsure"
+      enforce: true
+      action: "Vraag verduidelijking bij twijfel"
+    
+    - rule: "validate_before_change"
+      enforce: true
+      action: "Controleer aannames voor wijzigingen"
+    
+    - rule: "commit_early"
+      enforce: true
+      action: "Commit zodra een wijziging compleet is"
+
 # Pre-actie documentatie checks
 pre_action_checks:
   core_docs:
