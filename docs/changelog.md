@@ -1,38 +1,28 @@
 # Changelog
 
-## [Unreleased]
+Alle belangrijke wijzigingen in dit project worden hier gedocumenteerd.
 
-### Added
-- MongoDB schema's en types voor:
-  - Logs
-  - Page Analytics
-  - SEO Metrics
-  - SEA Metrics
-  - Competitor Data
-- MongoDB configuratie en indexen
-- Uitgebreide database documentatie
-- Type-safe MongoDB collections
+## [2025-01-11]
 
-### Changed
-- Verbeterde database schema's met meer detail
-- Geoptimaliseerde MongoDB indexen
-- Bijgewerkte documentatie
+### Toegevoegd
+- Docker ontwikkelomgeving opgezet
+  - Frontend container met Node.js en hot-reloading
+  - Backend container met Node.js en Prisma
+  - PostgreSQL database container
+  - MongoDB database container
+  - Redis cache container
+- Docker Compose configuratie voor development
+- Development Dockerfiles voor frontend en backend
+- Monitoring stack met Prometheus en Grafana
+- Setup documentatie met Docker instructies
+- Environment variabelen template (.env.example)
 
-### Security
-- MongoDB indexen voor betere query performance
-- Type-safe database operaties
+### Gewijzigd
+- Project structuur geoptimaliseerd voor Docker
+- Development workflow aangepast voor containerization
+- Database connecties geconfigureerd voor Docker netwerk
 
-## [0.1.0] - 2025-01-11
-### Added
-- PostgreSQL database schema met Prisma
-- Frontend authentication context met OAuth 2.0
-- Error Boundary component
-- Analytics en SEA hooks
-- Basis TypeScript types
-- Environment configuratie voorbeelden
-
-### Security
-- OAuth 2.0 implementatie
-- JWT refresh token systeem
-- Database indexen
-- Environment variabelen scheiding
+### Beveiliging
+- Veilige standaardconfiguratie voor databases
+- Environment variabelen gescheiden van code
+- Secrets management verbeterd

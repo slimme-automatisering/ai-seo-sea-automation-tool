@@ -2,12 +2,14 @@ FROM node:18-alpine
 
 WORKDIR /app
 
+# Kopieer package.json en package-lock.json
 COPY package*.json ./
 
+# Installeer dependencies
 RUN npm install
 
+# Kopieer de rest van de applicatie
 COPY . .
 
-EXPOSE 3000
-
+# Start de development server
 CMD ["npm", "run", "dev"]
