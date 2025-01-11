@@ -11,18 +11,21 @@ config:
 safe_changes:
   pre_change_checks:
     - action: "view_current_state"
+      enforce: true
       steps:
         - "Bekijk huidige bestand met view_file"
         - "Analyseer de bestaande structuur"
         - "Identificeer wat er echt moet veranderen"
     
     - action: "make_plan"
+      enforce: true
       steps:
         - "Maak een concreet plan voor wijzigingen"
         - "Focus op kleine, gerichte aanpassingen"
         - "Voorkom onnodige herstructurering"
     
     - action: "verify_impact"
+      enforce: true
       steps:
         - "Check gerelateerde bestanden"
         - "Beoordeel impact op andere delen"
@@ -30,18 +33,21 @@ safe_changes:
 
   change_workflow:
     - step: "single_file_focus"
+      enforce: true
       rules:
         - "Werk met één bestand tegelijk"
         - "Maak wijzigingen in kleine stappen"
         - "Commit na elke betekenisvolle wijziging"
     
     - step: "review_changes"
+      enforce: true
       rules:
         - "Controleer wijzigingen voor commit"
         - "Verifieer dat originele functionaliteit behouden blijft"
         - "Check op onbedoelde wijzigingen"
     
     - step: "documentation_update"
+      enforce: true
       rules:
         - "Update gerelateerde documentatie"
         - "Houd changelog bij"
