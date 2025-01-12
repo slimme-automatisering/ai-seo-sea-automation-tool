@@ -28,6 +28,7 @@ services:
       - "4000:4000"
     environment:
       - NODE_ENV=development
+      - PORT=4000
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/ai_seo_sea_db
       - MONGODB_URL=mongodb://mongodb:27017
       - MONGODB_DB_NAME=ai_seo_sea_analytics

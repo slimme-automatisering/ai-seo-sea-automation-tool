@@ -7,16 +7,19 @@ import { theme } from './styles/theme';
 import AppRoutes from './routes';
 import { AuthProvider } from './context/AuthContext';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { RouterProvider } from './providers/RouterProvider';
 
 const App: FC = () => {
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <ErrorBoundary>
-          <AuthProvider>
-            <CssBaseline />
-            <AppRoutes />
-          </AuthProvider>
+          <RouterProvider>
+            <AuthProvider>
+              <CssBaseline />
+              <AppRoutes />
+            </AuthProvider>
+          </RouterProvider>
         </ErrorBoundary>
       </ThemeProvider>
     </Provider>

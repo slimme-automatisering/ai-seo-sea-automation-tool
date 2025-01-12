@@ -1,18 +1,21 @@
-FROM node:18-alpine
+FROM node:20-alpine
+
+# Install OpenSSL and other dependencies
+RUN apk add --no-cache openssl postgresql-client
 
 WORKDIR /app
 
 # Kopieer package.json en package-lock.json
 COPY package*.json ./
 
-# Installeer dependencies
-RUN npm install
+# Schone installatie van dependencies
+RUN rm -rf node_modules \
+    && npm install
 
-# Kopieer de rest van de applicatie
+# Kopieer de rest van de code
 COPY . .
 
 # Genereer Prisma client
 RUN npx prisma generate
 
-# Start de development server
 CMD ["npm", "run", "dev"]

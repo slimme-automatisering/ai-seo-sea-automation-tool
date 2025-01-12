@@ -1,21 +1,29 @@
+'use client';
+
 import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { store } from '../store';
-import AppRoutes from '../routes';
 import { AuthProvider } from '../context/AuthContext';
+import dynamic from 'next/dynamic';
 import '../styles/globals.css';
+import type { AppProps } from 'next/app';
 
-const App: React.FC = () => {
+// Dynamically import the router components with ssr disabled
+const AppWithRouter = dynamic(
+  () => import('../components/AppWithRouter'),
+  { ssr: false }
+);
+
+function MyApp({ Component, pageProps }: AppProps) {
   return (
     <Provider store={store}>
       <AuthProvider>
-        <Router>
-          <AppRoutes />
-        </Router>
+        <AppWithRouter>
+          <Component {...pageProps} />
+        </AppWithRouter>
       </AuthProvider>
     </Provider>
   );
-};
+}
 
-export default App;
+export default MyApp;

@@ -1,0 +1,182 @@
+openapi: 3.0.0
+info:
+  title: Auth API
+  version: 1.0.0
+  description: Authentication and authorization endpoints for the AI SEO/SEA Automation Tool
+
+servers:
+  - url: http://localhost:4000
+    description: Development server
+
+paths:
+  /api/auth:
+    get:
+      summary: Get available auth endpoints
+      description: Returns a list of all available authentication endpoints
+      responses:
+        '200':
+          description: List of available endpoints
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Auth API endpoints
+                  endpoints:
+                    type: object
+                    properties:
+                      public:
+                        type: object
+                        properties:
+                          register:
+                            type: string
+                            example: POST /api/auth/register
+                          verifyEmail:
+                            type: string
+                            example: POST /api/auth/verify-email
+                          login:
+                            type: string
+                            example: POST /api/auth/login
+                          requestPasswordReset:
+                            type: string
+                            example: POST /api/auth/request-password-reset
+                          resetPassword:
+                            type: string
+                            example: POST /api/auth/reset-password
+                          verify2FA:
+                            type: string
+                            example: POST /api/auth/verify-2fa
+                      protected:
+                        type: object
+                        properties:
+                          profile:
+                            type: string
+                            example: GET /api/auth/profile
+                          enable2FA:
+                            type: string
+                            example: POST /api/auth/enable-2fa
+                          logout:
+                            type: string
+                            example: POST /api/auth/logout
+
+  /api/auth/register:
+    post:
+      summary: Register a new user
+      description: Create a new user account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - name
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+                name:
+                  type: string
+      responses:
+        '201':
+          description: User successfully registered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  email:
+                    type: string
+                    format: email
+        '400':
+          description: Invalid input or email already in use
+
+  /api/auth/verify-email:
+    post:
+      summary: Verify email address
+      description: Verify user's email address using the verification token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+              properties:
+                token:
+                  type: string
+      responses:
+        '200':
+          description: Email successfully verified
+        '400':
+          description: Invalid or expired token
+
+  /api/auth/login:
+    post:
+      summary: User login
+      description: Authenticate user and get access token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                token2FA:
+                  type: string
+                  description: Required if 2FA is enabled
+      responses:
+        '200':
+          description: Successfully logged in
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      email:
+                        type: string
+                        format: email
+                      role:
+                        type: string
+                        enum: [USER, ADMIN]
+        '401':
+          description: Invalid credentials or 2FA token required
+
+security:
+  - BearerAuth: []
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -17,6 +17,11 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(rateLimit(RATE_LIMIT));
 
+// Health check
+app.get('/', (_req, res) => {
+  res.json({ status: 'ok', message: 'AI SEO/SEA Automation Tool API' });
+});
+
 // Routes
 app.use('/api/auth', authRoutes);
 
@@ -26,11 +31,11 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
   res.status(500).json({ message: 'Er is een interne serverfout opgetreden' });
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = parseInt(process.env.PORT || '4000', 10);
 
 export const startServer = async () => {
   try {
-    app.listen(PORT, () => {
+    app.listen(PORT, '0.0.0.0', () => {
       console.log(`Server draait op poort ${PORT}`);
     });
   } catch (error) {
