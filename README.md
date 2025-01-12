@@ -19,6 +19,15 @@ This project is a progressive web app (PWA) designed to automate and optimize SE
 - [API Documentation](docs/api.md)
 - [File Structure Documentation](docs/file-structure.md)
 
+## Components
+## 1. SEO Settings Component
+- **Component:** SEOSettings
+  - Dit component stelt gebruikers in staat om SEO-instellingen te beheren en te optimaliseren. Het biedt een interface voor het aanpassen van belangrijke SEO-parameters.
+
+## 2. SEO Settings Component
+- **Component:** SEOSettings
+  - Dit component stelt gebruikers in staat om SEO-instellingen te beheren en te optimaliseren. Het biedt een interface voor het aanpassen van belangrijke SEO-parameters.
+
 ## Setup Instructions
 1. Clone the repository.
 2. Install dependencies using `npm install` for the frontend and `npm install` for the backend.

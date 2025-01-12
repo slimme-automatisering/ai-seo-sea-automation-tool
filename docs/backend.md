@@ -5,7 +5,11 @@
 - **Framework:** Node.js with Express.js
   - Node.js and Express.js are chosen for their lightweight and scalable nature, making them ideal for handling the app’s backend requirements.
 
-## 2. Database
+## 2. Backend Structuur
+- De backend structuur is logisch en gestructureerd, met duidelijke scheidingen tussen verschillende functionaliteiten.
+- De API documentatie biedt inzicht in de beschikbare services en hoe deze met de frontend communiceren.
+
+## 3. Database
 
 - **Primary Database:** PostgreSQL
   - PostgreSQL is recommended for structured data (e.g., user accounts, campaign data, billing information) due to its robustness, scalability, and support for complex queries.

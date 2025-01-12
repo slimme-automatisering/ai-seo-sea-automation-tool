@@ -39,7 +39,17 @@ ai-seo-sea-automation-tool/
 ├── frontend/
 │   ├── public/                     # Static assets (e.g., images, favicon)
 │   ├── src/
-│   │   ├── components/             # Reusable UI components (e.g., buttons, cards)
+│   │   ├── components/
+│   │   │   ├── dashboard/
+│   │   │   │   ├── seo-reports/          # Bevat componenten voor SEO-rapportages
+│   │   │   │   │   ├── BacklinksOverview.tsx
+│   │   │   │   │   ├── KeywordPerformanceDetails.tsx
+│   │   │   │   │   ├── KeywordRankings.tsx
+│   │   │   │   │   ├── SearchAnalytics.tsx
+│   │   │   │   │   ├── SEOOverview.tsx
+│   │   │   │   │   ├── SEOSettings.tsx
+│   │   │   │   │   ├── TechnicalSEOStatus.tsx
+│   │   │   │   │   └── TopKeywords.tsx
 │   │   ├── pages/                  # Page components (e.g., Dashboard, SEO, SEA)
 │   │   ├── styles/                 # Global styles and themes
 │   │   ├── utils/                  # Utility functions (e.g., API calls, form validation)
@@ -72,6 +82,16 @@ project-root/
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
+│   │   │   ├── dashboard/
+│   │   │   │   ├── seo-reports/          # Bevat componenten voor SEO-rapportages
+│   │   │   │   │   ├── BacklinksOverview.tsx
+│   │   │   │   │   ├── KeywordPerformanceDetails.tsx
+│   │   │   │   │   ├── KeywordRankings.tsx
+│   │   │   │   │   ├── SearchAnalytics.tsx
+│   │   │   │   │   ├── SEOOverview.tsx
+│   │   │   │   │   ├── SEOSettings.tsx
+│   │   │   │   │   ├── TechnicalSEOStatus.tsx
+│   │   │   │   │   └── TopKeywords.tsx
 │   │   ├── pages/
 │   └── package.json
 ├── backend/

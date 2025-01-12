@@ -1,8 +1,5 @@
 ## User Flow Documentation
 
-```markdown
-# User Flow Documentation
-
 ## 1. Onboarding Flow
 ### Steps:
 1. **Sign-Up:**
@@ -40,7 +37,10 @@ graph TD
 
 ---
 
-## 2. Core User Journey
+## 2. User Flow
+- De user flow documentatie is consistent en biedt een duidelijk overzicht van de stappen die gebruikers doorlopen bij het gebruik van de applicatie.
+- De onboarding flow en alternatieve stromen zijn goed gedocumenteerd.
+
 ### Steps:
 1. **Dashboard Overview:**
    - User logs in and lands on the dashboard.

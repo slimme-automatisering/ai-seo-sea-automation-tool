@@ -19,34 +19,39 @@
 - **Side Menu:** For additional options and settings (e.g., user management, billing, integrations).
 - **Tabs:** For switching between related views (e.g., SEO vs. SEA, Campaigns vs. Analytics).
 
-## 4. Styling
+## 4. SEO Reports Component
+- **Componenten:**
+  - De componenten in deze map zijn specifiek gericht op SEO-rapportages en analyses.
+  - Bestanden zoals BacklinksOverview, KeywordPerformanceDetails, en TopKeywords zijn nu verplaatst naar de seo-reports map om duidelijkheid te bieden.
+
+## 5. Styling
 
 - **Approach:** Styled Components
   - Styled Components will be used for CSS-in-JS, enabling dynamic theming (e.g., night and day modes) and scoped styles for components.
 
-## 5. Forms
+## 6. Forms
 
 - **Login/Sign-Up Forms:** For user authentication, including email/password and social login options.
 - **Campaign Creation Forms:** For setting up Google Ads campaigns, including ad copy, bidding parameters, and targeting options.
 - **Content Generation Forms:** For inputting content parameters (e.g., keywords, tone, length) for AI-generated content.
 
-## 6. Dashboard Components
+## 7. Dashboard Components
 
 - **Charts and Graphs:** Built using Plotly and Apache ECharts for displaying analytics (e.g., ROI trends, CPC performance).
 - **Data Tables:** For showing raw data (e.g., keyword rankings, ad performance metrics).
 - **Cards:** For summarizing key metrics (e.g., ROI, CPC, traffic) in a visually appealing way.
 
-## 7. Responsive Design
+## 8. Responsive Design
 
 - **Breakpoints:** Specific breakpoints will be defined for mobile, tablet, and desktop devices to ensure optimal responsiveness.
 - **Touch Optimization:** No specific requirements for now, but the design will be touch-friendly by default.
 
-## 8. Theming
+## 9. Theming
 
 - **Dynamic Theming:** Support for switching between night and day modes.
 - **Branding Guidelines:** Not defined yet, but the theming system will be flexible to accommodate future branding requirements.
 
-## 9. State Management
+## 10. State Management
 
 - **Global State Management:** Redux
   - Redux will be used for predictable state management across the app.
@@ -55,7 +60,7 @@
 - **Caching:** Redis
   - Redis will be used for caching frequently accessed data (e.g., analytics, competitor data) to improve performance.
 
-## 10. Performance Optimization
+## 11. Performance Optimization
 
 - **Lazy Loading:** Components will be loaded only when needed (e.g., charts and tables when the user navigates to the analytics section).
 - **Code Splitting:** The app will be split into smaller bundles to reduce initial load time.
