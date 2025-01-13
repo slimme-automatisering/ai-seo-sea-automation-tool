@@ -1,42 +1,132 @@
 # State Management Documentation
 
 ## 1. Local State
-- **React State:** Use React's `useState` and `useReducer` hooks for component-specific state.
-- **Form State:** Use Formik for managing form state and validation.
+- **React State:** Gebruik React's `useState` en `useReducer` hooks voor component-specifieke state
+- **Form State:** Gebruik Formik voor form state en validatie
 
-## 2. Global State
-- **Redux:** Use Redux for global state management.
-- **Redux Toolkit:** Use Redux Toolkit to simplify Redux setup and usage.
-- **Actions:** Define actions for updating state (e.g., `SET_CAMPAIGNS`, `UPDATE_CONTENT`).
-- **Reducers:** Define reducers to handle actions and update state.
+## 2. Global State (Redux)
 
-### Example:
-```javascript
-const campaignsSlice = createSlice({
-  name: 'campaigns',
-  initialState: [],
-  reducers: {
-    setCampaigns: (state, action) => action.payload,
-    addCampaign: (state, action) => [...state, action.payload],
-  },
-});
+### 2.1 Store Structuur
+```typescript
+RootState {
+  analytics: {
+    isLoading: boolean
+    error: string | null
+    dateRange: {
+      start: string
+      end: string
+    }
+    metrics: {
+      pageViews: AnalyticsMetric
+      uniqueVisitors: AnalyticsMetric
+      bounceRate: AnalyticsMetric
+      avgSessionDuration: AnalyticsMetric
+    }
+    trafficSources: TrafficSource[]
+    topPages: {
+      url: string
+      views: number
+      uniqueVisitors: number
+    }[]
+    realTimeUsers: number
+  }
+  auth: {
+    user: User | null
+    isAuthenticated: boolean
+    loading: boolean
+    error: string | null
+  }
+  seo: {
+    rankings: KeywordRanking[]
+    technicalIssues: TechnicalIssue[]
+    backlinks: Backlink[]
+    visibility: number
+    loading: boolean
+    error: string | null
+  }
+  sea: {
+    campaigns: Campaign[]
+    adGroups: AdGroup[]
+    performance: {
+      clicks: number
+      impressions: number
+      ctr: number
+      cost: number
+    }
+    loading: boolean
+    error: string | null
+  }
+}
 ```
 
----
+### 2.2 Slices
+- **analyticsSlice:** Analytics en statistieken
+  - Metrics tracking
+  - Traffic bronnen
+  - Real-time gebruikers
+- **authSlice:** Authenticatie state
+  - Login/logout
+  - Gebruikersgegevens
+- **seoSlice:** SEO gerelateerde data
+  - Keyword rankings
+  - Technische issues
+  - Backlinks
+- **seaSlice:** SEA campagne data
+  - Campagne beheer
+  - Ad performance
+  - Budget tracking
 
 ## 3. Server State
-- **React Query:** Use React Query for managing server-side data (e.g., API responses).
-- **GraphQL:** Use Apollo Client for managing GraphQL queries and mutations.
+- **React Query:** Server-side data management
+  - API responses caching
+  - Automatische background updates
+  - Loading/error states
+- **GraphQL:** Apollo Client voor GraphQL operaties
+  - Query caching
+  - Optimistic updates
+  - Local resolvers
 
 ## 4. Persistence 
-- **Local Storage:** Use local storage to persist user preferences.
-- **Session Storage:** Use session storage to persist temporary data (e.g., form inputs).
-- **Redis:** Use Redis for caching frequently accessed data.
+- **Local Storage:**
+  - Gebruikersvoorkeuren
+  - UI instellingen
+  - Auth tokens
+- **Session Storage:**
+  - Tijdelijke form data
+  - Wizard states
+  - Page state
+- **Redis:**
+  - API response caching
+  - Rate limiting data
+  - Session management
 
 ## 5. State Flow
-- **Frontend → Backend:** User actions trigger API calls, which update server-side state.
-- **Backend → Frontend:** API responses update frontend state, which triggers UI updates.
+```mermaid
+graph TD
+    A[User Action] --> B[Component]
+    B --> C{State Type?}
+    C -->|Local| D[React State]
+    C -->|Global| E[Redux Store]
+    C -->|Server| F[React Query]
+    E --> G[API Call]
+    F --> G
+    G --> H[Backend]
+    H --> I[Database]
+    I --> J[Cache Layer]
+    J --> K[Frontend Update]
+    K --> B
+```
 
-## 6. Debugging
-- **Redux DevTools:** Use Redux DevTools for debugging global state.
-- **React Query DevTools:** Use React Query DevTools for debugging server state.
+## 6. Debugging Tools
+- **Redux DevTools:**
+  - Action monitoring
+  - State tijdlijn
+  - Action replay
+- **React Query DevTools:**
+  - Cache inspectie
+  - Request monitoring
+  - Background updates
+- **React Developer Tools:**
+  - Component debugging
+  - Props/state inspectie
+  - Performance monitoring

@@ -15,7 +15,7 @@ node_modules/
 #.env.local
 #.env.development.local
 #.env.test.local
-.env.production.local
+#.env.production.local
 
 # Debug logs
 npm-debug.log*
@@ -76,3 +76,8 @@ coverage/
 !.yarn/sdks
 !.yarn/versions
 .pnp.*
+
+# Windsurfrules en Cursor regels (Windows)
+!.windsurfrules
+!.cursorrules
+!.cursorignore

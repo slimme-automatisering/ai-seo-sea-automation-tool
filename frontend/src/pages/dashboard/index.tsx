@@ -1,50 +1,54 @@
 import { FC } from 'react';
-import { Box, Grid } from '@mui/material';
-import DashboardMetrics from '../../components/dashboard/DashboardMetrics';
-import { DashboardLayout } from '../../components/dashboard/DashboardLayout';
-import KeywordRankings from '@/components/dashboard/seo-reports/KeywordRankings';
-import VisibilityScore from '@/components/dashboard/seo-reports/VisibilityScore';
+import { Box, Grid, Paper } from '@mui/material';
+import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
+import OverallMetrics from '@/components/dashboard/OverallMetrics';
+import QuickActions from '@/components/dashboard/QuickActions';
+import RecentPerformance from '@/components/dashboard/RecentPerformance';
 import TopKeywords from '@/components/dashboard/seo-reports/TopKeywords';
 import SearchAnalytics from '@/components/dashboard/seo-reports/SearchAnalytics';
-import BacklinksOverview from '@/components/dashboard/seo-reports/BacklinksOverview';
-import TechnicalSEOStatus from '@/components/dashboard/seo-reports/TechnicalSEOStatus';
-import KeywordPerformanceDetails from '@/components/dashboard/seo-reports/KeywordPerformanceDetails';
-import SEOOverview from '@/components/dashboard/seo-reports/SEOOverview';
-import SEOSettings from '@/components/dashboard/seo-reports/SEOSettings';
 import CampaignOverview from '@/components/dashboard/CampaignOverview';
 
 const DashboardPage: FC = () => {
   return (
     <DashboardLayout title="Dashboard">
-      <Box sx={{ flexGrow: 1 }}>
-        <DashboardMetrics />
+      <Box sx={{ p: 3 }}>
+        {/* Bovenste rij met metrics */}
+        <Box sx={{ mb: 3 }}>
+          <OverallMetrics />
+        </Box>
+
+        {/* Tweede rij met snelle acties */}
+        <Box sx={{ mb: 3 }}>
+          <QuickActions />
+        </Box>
+
         <Grid container spacing={3}>
-          <Grid item xs={12} md={8}>
-            <KeywordRankings />
+          {/* Prestatie grafieken */}
+          <Grid item xs={12} lg={8}>
+            <Paper sx={{ p: 2 }}>
+              <RecentPerformance />
+            </Paper>
           </Grid>
-          <Grid item xs={12} md={4}>
-            <VisibilityScore />
+
+          {/* Campaign Overview */}
+          <Grid item xs={12} lg={4}>
+            <Paper sx={{ p: 2 }}>
+              <CampaignOverview />
+            </Paper>
           </Grid>
+
+          {/* SEO Preview */}
           <Grid item xs={12} md={6}>
-            <TopKeywords />
+            <Paper sx={{ p: 2 }}>
+              <TopKeywords />
+            </Paper>
           </Grid>
+
+          {/* Search Analytics Preview */}
           <Grid item xs={12} md={6}>
-            <SearchAnalytics />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <BacklinksOverview />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TechnicalSEOStatus />
-          </Grid>
-          <Grid item xs={12}>
-            <KeywordPerformanceDetails />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <SEOOverview />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <SEOSettings />
+            <Paper sx={{ p: 2 }}>
+              <SearchAnalytics />
+            </Paper>
           </Grid>
         </Grid>
       </Box>

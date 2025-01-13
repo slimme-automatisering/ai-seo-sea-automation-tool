@@ -1,317 +1,273 @@
-# Backend Documentation
+# Backend Documentatie
 
-## 1. Backend Framework
+## Backend Architectuur
 
-- **Framework:** Node.js with Express.js
-  - Node.js and Express.js are chosen for their lightweight and scalable nature, making them ideal for handling the app’s backend requirements.
+### 1. Project Structuur
 
-## 2. Backend Structuur
-- De backend structuur is logisch en gestructureerd, met duidelijke scheidingen tussen verschillende functionaliteiten.
-- De API documentatie biedt inzicht in de beschikbare services en hoe deze met de frontend communiceren.
+```
+backend/
+├── src/
+│   ├── config/                # Configuratie
+│   │   ├── database/        # Database configuraties
+│   │   │   ├── postgres.ts
+│   │   │   ├── mongodb.ts
+│   │   │   └── redis.ts
+│   │   ├── auth/          # Auth configuraties
+│   │   │   ├── oauth.ts
+│   │   │   └── jwt.ts
+│   │   ├── api/          # API configuraties
+│   │   │   ├── rest.ts
+│   │   │   └── graphql.ts
+│   │   └── env.ts       # Environment configuratie
+│   ├── controllers/    # Request handlers
+│   │   ├── analytics/  # Analytics controllers
+│   │   │   ├── CompetitorController.ts
+│   │   │   ├── PerformanceController.ts
+│   │   │   └── ReportingController.ts
+│   │   ├── auth/      # Auth controllers
+│   │   │   ├── AuthController.ts
+│   │   │   └── UserController.ts
+│   │   ├── seo/      # SEO controllers
+│   │   │   ├── KeywordController.ts
+│   │   │   ├── BacklinkController.ts
+│   │   │   └── AuditController.ts
+│   │   └── sea/     # SEA controllers
+│   │       ├── CampaignController.ts
+│   │       ├── AdController.ts
+│   │       └── BudgetController.ts
+│   ├── services/   # Business logic
+│   │   ├── analytics/
+│   │   │   ├── CompetitorService.ts
+│   │   │   ├── PerformanceService.ts
+│   │   │   └── ReportingService.ts
+│   │   ├── auth/
+│   │   │   ├── AuthService.ts
+│   │   │   └── UserService.ts
+│   │   ├── seo/
+│   │   │   ├── KeywordService.ts
+│   │   │   ├── BacklinkService.ts
+│   │   │   └── AuditService.ts
+│   │   └── sea/
+│   │       ├── CampaignService.ts
+│   │       ├── AdService.ts
+│   │       └── BudgetService.ts
+│   ├── models/    # Database models
+│   │   ├── analytics/
+│   │   │   ├── Competitor.ts
+│   │   │   ├── Performance.ts
+│   │   │   └── Report.ts
+│   │   ├── auth/
+│   │   │   ├── User.ts
+│   │   │   └── Session.ts
+│   │   ├── seo/
+│   │   │   ├── Keyword.ts
+│   │   │   ├── Backlink.ts
+│   │   │   └── Audit.ts
+│   │   └── sea/
+│   │       ├── Campaign.ts
+│   │       ├── Ad.ts
+│   │       └── Budget.ts
+│   ├── routes/   # API routes
+│   │   ├── v1/  # REST API v1
+│   │   │   ├── analytics.routes.ts
+│   │   │   ├── auth.routes.ts
+│   │   │   ├── seo.routes.ts
+│   │   │   └── sea.routes.ts
+│   │   └── graphql/
+│   │       ├── schema/
+│   │       │   ├── analytics.graphql
+│   │       │   ├── auth.graphql
+│   │       │   ├── seo.graphql
+│   │       │   └── sea.graphql
+│   │       └── resolvers/
+│   │           ├── analytics.resolver.ts
+│   │           ├── auth.resolver.ts
+│   │           ├── seo.resolver.ts
+│   │           └── sea.resolver.ts
+│   ├── middleware/  # Middleware
+│   │   ├── auth/
+│   │   │   ├── authGuard.ts
+│   │   │   └── roleGuard.ts
+│   │   ├── validation/
+│   │   │   ├── inputValidator.ts
+│   │   │   └── schemaValidator.ts
+│   │   └── performance/
+│   │       ├── rateLimiter.ts
+│   │       └── cache.ts
+│   ├── jobs/     # Background jobs
+│   │   ├── analytics/
+│   │   │   ├── updateMetrics.ts
+│   │   │   └── generateReports.ts
+│   │   ├── seo/
+│   │   │   ├── rankTracking.ts
+│   │   │   └── auditScheduler.ts
+│   │   └── sea/
+│   │       ├── budgetOptimizer.ts
+│   │       └── performanceAnalyzer.ts
+│   ├── utils/   # Utilities
+│   │   ├── api/
+│   │   │   ├── response.ts
+│   │   │   └── error.ts
+│   │   ├── database/
+│   │   │   ├── transaction.ts
+│   │   │   └── migration.ts
+│   │   └── validation/
+│   │       ├── schemas.ts
+│   │       └── rules.ts
+│   ├── types/  # TypeScript types
+│   │   ├── models.ts
+│   │   ├── api.ts
+│   │   └── config.ts
+│   └── prisma/ # Database schema
+│       ├── schema.prisma
+│       └── migrations/
+├── tests/      # Test bestanden
+│   ├── unit/
+│   │   ├── controllers/
+│   │   ├── services/
+│   │   └── utils/
+│   └── integration/
+│       ├── api/
+│       └── database/
+├── scripts/   # Build & deployment scripts
+│   ├── setup/
+│   └── deploy/
+├── server.ts  # Server entry point
+├── Dockerfile # Docker configuratie
+├── .env.example # Environment template
+├── package.json
+└── tsconfig.json
 
-## 3. Database
+### 2. Feature Modules
 
-- **Primary Database:** PostgreSQL
-  - PostgreSQL is recommended for structured data (e.g., user accounts, campaign data, billing information) due to its robustness, scalability, and support for complex queries.
-- **Secondary Database:** MongoDB
-  - MongoDB is recommended for unstructured or semi-structured data (e.g., AI-generated content, logs, analytics) due to its flexibility and schema-less design.
-- **Recommendation:** Use PostgreSQL for relational data and MongoDB for NoSQL use cases. This hybrid approach ensures optimal performance and flexibility.
+Elk feature module (analytics, auth, seo, sea) volgt dezelfde structuur:
 
-### Database Schema Diagram
+```
+feature/
+├── controllers/     # HTTP request handlers
+│   └── FeatureController.ts
+├── services/       # Business logic
+│   └── FeatureService.ts
+├── models/         # Data models
+│   └── Feature.ts
+├── routes/         # Route definitions
+│   └── feature.routes.ts
+├── jobs/          # Background jobs
+│   └── feature.jobs.ts
+└── types/         # Type definitions
+    └── feature.types.ts
+```
 
-```mermaid
-USERS ||--o{ CAMPAIGNS : "manages"
-  USERS {
-    string id
-    string email
-    string passwordHash
-    string role
-  }
-  CAMPAIGNS {
-    string id
-    string userId
-    string name
-    float budget
-    date startDate
-    date endDate
-  }
-  CONTENT {
-    string id
-    string campaignId
-    string type
-    string text
-    date createdAt
-  }
-  KEYWORDS {
-    string id
-    string campaignId
-    string keyword
-    float cpc
-  }
+### 3. Database Schema
+
+#### 3.1 PostgreSQL (Primaire Database)
+- Gebruikers & authenticatie
+- SEO & SEA campagnes
+- Rapportages & metrics
+
+#### 3.2 MongoDB (Secundaire Database)
+- Analytics data
+- Logs & audit trails
+- Ongestructureerde content
+
+#### 3.3 Redis (Caching)
+- Session management
+- API rate limiting
+- Job queues
+
+### 4. API Endpoints
+
+#### 4.1 REST API (v1)
+```
+# Analytics
+GET    /api/v1/analytics/competitors
+GET    /api/v1/analytics/performance
+POST   /api/v1/analytics/reports
+
+# Auth
+POST   /api/v1/auth/login
+POST   /api/v1/auth/register
+GET    /api/v1/auth/me
+
+# SEO
+GET    /api/v1/seo/keywords
+POST   /api/v1/seo/audit
+GET    /api/v1/seo/backlinks
+
+# SEA
+GET    /api/v1/sea/campaigns
+POST   /api/v1/sea/ads
+PUT    /api/v1/sea/budget
+```
+
+#### 4.2 GraphQL Schema
+```graphql
+type Query {
+  # Analytics
+  competitors: [Competitor!]!
+  performance: PerformanceMetrics!
+  
+  # SEO
+  keywords: [Keyword!]!
+  backlinks: [Backlink!]!
+  
+  # SEA
+  campaigns: [Campaign!]!
+  ads: [Ad!]!
 }
 
-```
-
----
-
-## 3. Authentication
-
-- **Authentication Method:** OAuth 2.0
-  - OAuth 2.0 will be used for Admin and Manager roles, allowing them to log in with their Google accounts and directly connect with Google APIs.
-- **User Invitations:** Admins can invite User roles through their Google accounts and control permissions.
-- **2FA (Two-Factor Authentication):** An additional security layer will be implemented for all roles using OAuth 2.0.
-
----
-
-## 4. API Design
-
-- **RESTful APIs:** For integrations with external APIs (e.g., Google Ads API, WordPress REST API).
-- **GraphQL:** For internal data queries requiring flexibility and scalability (e.g., fetching SEO/SEA performance data, dashboard visualizations).
-- **WebSockets:** For real-time communication (e.g., live updates, notifications).
-- **Security and Rate Limiting:** Strong security measures (e.g., HTTPS, input validation) and rate limiting will be implemented to prevent API misuse.
-
----
-
-## 4. Services
-
-### Content Generation Service
-
-```typescript
-interface ContentGenerationParams {
-  type: "blog" | "product" | "meta" | "alt-text";
-  keywords: string[];
-  tone?: string;
-  length?: number;
-  context?: string;
+type Mutation {
+  # Analytics
+  generateReport: Report!
+  
+  # SEO
+  runAudit: AuditResult!
+  
+  # SEA
+  createCampaign(input: CampaignInput!): Campaign!
+  optimizeBudget(campaignId: ID!): Budget!
 }
 ```
 
-- Gebruikt OpenAI API voor content generatie
-- Ondersteunt verschillende content types
-- Optimalisatie voor SEO en leesbaarheid
+### 5. Middleware Stack
 
-### SEO Analysis Service
+#### 5.1 Request Pipeline
+1. Rate Limiting
+2. Authentication
+3. Authorization
+4. Input Validation
+5. Response Transformation
 
-```typescript
-interface SeoAnalysisResult {
-  meta: MetaAnalysis;
-  content: ContentAnalysis;
-  technical: TechnicalAnalysis;
-  suggestions: string[];
-}
-```
+#### 5.2 Error Handling
+- Custom error classes
+- Error logging
+- Client-friendly responses
 
-- Complete SEO analyse van webpagina's
-- Meta tags en content analyse
-- Technische SEO checks
-- Performance metingen
+### 6. Background Jobs
 
-### Google Ads Service
+#### 6.1 Scheduled Jobs
+- SEO rank tracking
+- Performance metrics updates
+- Report generation
 
-```typescript
-interface CampaignParams {
-  name: string;
-  budget: number;
-  targetLocations: string[];
-  keywords: string[];
-  negativeKeywords?: string[];
-  startDate?: Date;
-  endDate?: Date;
-}
-```
+#### 6.2 Event-Driven Jobs
+- Budget optimization
+- Alert notifications
+- Data synchronization
 
-- Volledige Google Ads API integratie
-- Campagne management
-- Budget beheer
-- Performance tracking
+### 7. Development Guidelines
 
-### Keyword Research Service
+#### 7.1 Code Style
+- TypeScript strict mode
+- ESLint configuration
+- Prettier formatting
 
-```typescript
-interface KeywordSuggestion {
-  keyword: string;
-  searchVolume: number;
-  difficulty: number;
-  cpc: number;
-  competition: number;
-  source: "semrush" | "ahrefs" | "combined";
-}
-```
+#### 7.2 Testing
+- Unit tests per module
+- Integration tests voor API
+- E2E tests voor kritieke flows
 
-- Integratie met SEMrush en Ahrefs
-- Keyword analyse en suggesties
-- Zoekvolume en competitie tracking
-
-### Competitor Tracking Service
-
-```typescript
-interface CompetitorAnalysis {
-  url: string;
-  seoScore: number;
-  traffic: TrafficData;
-  keywordRankings: KeywordRanking[];
-  backlinks: BacklinkData;
-  contentGaps: ContentGap[];
-}
-```
-
-- Real-time concurrent monitoring
-- Traffic en backlink analyse
-- Content gap identificatie
-- SEO score berekening
-
-## 5. API Endpoints
-
-### Content Endpoints
-
-- `POST /api/content/generate` - Genereer nieuwe content
-- `POST /api/content/optimize` - Optimaliseer bestaande content
-- `GET /api/content/analyze` - Analyseer content kwaliteit
-
-### SEO Endpoints
-
-- `POST /api/seo/analyze` - Voer SEO analyse uit
-- `GET /api/seo/suggestions` - Krijg SEO verbetervoorstellen
-- `POST /api/seo/monitor` - Start SEO monitoring
-
-### Google Ads Endpoints
-
-- `POST /api/ads/campaigns` - Maak nieuwe campagne
-- `GET /api/ads/campaigns/:id` - Krijg campagne details
-- `GET /api/ads/campaigns/:id/performance` - Krijg campagne prestaties
-
-### Keyword Endpoints
-
-- `POST /api/keywords/research` - Doe keyword research
-- `GET /api/keywords/analyze/:keyword` - Analyseer specifieke keyword
-- `GET /api/keywords/suggestions` - Krijg keyword suggesties
-
-### Competitor Endpoints
-
-- `POST /api/competitors/track` - Start competitor tracking
-- `GET /api/competitors/:id/analysis` - Krijg competitor analyse
-- `GET /api/competitors/:id/gaps` - Identificeer content gaps
-
----
-
-## Backend Architecture Diagram
-
-```mermaid
-graph TD
-  A[Client] --> B[Frontend (React.js)]
-  B --> C[Backend (Node.js + Express.js)]
-  C --> D[REST API]
-  C --> E[GraphQL API]
-  C --> F[WebSockets]
-  D --> G[External APIs (Google Ads, WordPress)]
-  E --> H[Internal Queries (SEO/SEA Data)]
-  F --> I[Real-Time Updates]
-  C --> J[PostgreSQL]
-  C --> K[MongoDB]
-  J --> L[Structured Data (Users, Campaigns)]
-  K --> M[Unstructured Data (Logs, Analytics)]
-```
-
----
-
-## 5. Third-Party Integrations
-
-- **Payment Gateways:**
-  - **Stripe:** For international users.
-  - **PayPal:** For international users.
-  - **Mollie:** For the European market.
-- **Analytics:**
-  - **Google Analytics:** For tracking user behavior and campaign performance.
-- **SEO Tools:**
-  - **Yoast SEO API:** For WordPress SEO optimization.
-  - **Screaming Frog API:** For technical SEO analysis.
-- **AI and Machine Learning:**
-  - **OpenAI API:** For content generation and optimization.
-  - **TensorFlow.js:** For training NLP models to generate or optimize meta descriptions.
-  - **Scikit-learn:** For data analysis.
-  - **Hugging Face Transformers:** For NLP tasks (e.g., sentiment analysis, text summarization).
-  - **ResNet50:** For image analysis and alt-text generation.
-- **Social Media Advertising**
-  - **Meta Marketing API:** For future Facebook and Instagram advertising automation.
-  - **TikTok Ads API:** For future TikTok Ads automation.
-  - **LinkedIn Marketing API:** For future LinkedIn Ads automation.
-  - **Twitter Ads API:** For future Twitter Ads automation.
-- **Email Marketing**
-  - **Mailchimp API:** For future email marketing automation.
-- **Monitoring and Logging**
-  - **New Relic API:** For performance monitoring.
-
----
-
-## 6. Caching
-
-- **Redis:** For in-memory caching of frequently accessed data (e.g., analytics, competitor data).
-- **Memcached:** For distributed caching (optional, depending on scaling needs).
-- **Recommendation:** Start with Redis for its simplicity and performance. Memcached can be added later if distributed caching becomes necessary.
-
----
-
-## 7. Background Jobs
-
-- **Celery:** For Python-based background tasks (e.g., automated backups, environment secrets generation).
-- **Bull:** For Node.js-based background tasks (e.g., connection testing, CSRF testing).
-
----
-
-## 8. File Storage
-
-- **Cloud Storage:** AWS S3 or Google Cloud Storage will be used for storing and managing files (e.g., images, documents).
-- **Recommendation:** AWS S3 is preferred for its scalability and integration with other AWS services.
-
----
-
-## 9. Security
-
-- **HTTPS:** For secure communication.
-- **Input Validation:** To prevent SQL injection and XSS attacks.
-- **Rate Limiting:** To prevent API abuse.
-- **Security Headers:** To enhance HTTP security.
-- **Audit Logging:** For tracking and monitoring user actions.
-- **Spam Detection:** To filter out spammy content.
-- **Bot Protection:** To prevent bot abuse.
-- **DDoS Prevention:** To mitigate distributed denial-of-service attacks.
-- **Fraud Detection:** To identify and prevent fraudulent activities.
-
----
-
-## 10. Logging and Monitoring
-
-- **Logging:** Winston (Node.js) for structured logging.
-- **Monitoring:** Prometheus and Grafana for real-time monitoring and visualization.
-- **Performance Monitoring:** New Relic for application performance insights.
-
----
-
-## 11. Testing & CI/CD
-
-- **Unit Testing:** Jest for snapshot testing.
-- **End-to-End Testing:** Cypress for testing user flows.
-- **CI/CD:** GitHub Actions for automated testing and deployment.
-- **Code Quality Analysis:** SonarQube for code quality and security checks.
-- **Security Scans:** Automated security scans integrated into the CI/CD pipeline.
-- **GitHub CI/CD:** For continuous integration and deployment.
-
----
-
-├── backend/
-│ ├── src/
-│ │ ├── config/ # Configuration files (e.g., database, environment variables)
-│ │ ├── controllers/ # Request handlers (e.g., user, campaign, content)
-│ │ ├── models/ # Database models (e.g., User, Campaign, Content)
-│ │ ├── routes/ # API routes (e.g., REST, GraphQL)
-│ │ ├── services/ # Business logic (e.g., AI processing, third-party integrations)
-│ │ ├── utils/ # Utility functions (e.g., authentication, caching)
-│ │ ├── middleware/ # Middleware (e.g., rate limiting, input validation)
-│ │ ├── types/ # TypeScript type definitions
-│ │ └── prisma/ # Prisma schema en migraties
-│ ├── tests/ # Test files (e.g., unit tests, integration tests)
-│ ├── server.ts # Server entry point
-│ ├── Dockerfile.dev # Development Docker configuratie
-│ ├── .env # Environment variables
-│ ├── package.json # Dependencies and scripts
-│ ├── tsconfig.json # TypeScript configuratie
+#### 7.3 Documentation
+- OpenAPI/Swagger specs
+- JSDoc comments
+- README's per module

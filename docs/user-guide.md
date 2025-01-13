@@ -1,176 +1,258 @@
 # Gebruikershandleiding AI SEO & SEA Tool
+# AI SEO & SEA Tool User Guide
 
-## 1. Introductie
-Deze handleiding helpt je bij het gebruik van onze AI-gedreven SEO & SEA automatiseringstool. De tool is ontworpen om je te helpen bij het optimaliseren van je online zichtbaarheid via zowel organische zoekresultaten (SEO) als betaalde advertenties (SEA).
+[Nederlands](#gebruikershandleiding) | [English](#user-guide)
 
-## 2. Aan de Slag
+## Gebruikershandleiding
 
-### 2.1 Systeemvereisten
-- Modern web browser (Chrome, Firefox, Safari)
-- Stabiele internetverbinding
-- WordPress/WooCommerce website
-- Google Ads account
-- API keys voor SEMrush/Ahrefs (optioneel)
+### 1. Quick Start
+- [Installatie & Setup](setup.md#installation)
+- [Eerste Configuratie](setup.md#configuration)
+- [Dashboard Overzicht](user-flow.md#dashboard)
 
-### 2.2 Eerste Setup
-1. Account aanmaken
-2. Website verbinden
-3. API integraties configureren
-4. Initiële scan uitvoeren
+### 2. SEO Automatisering
 
-## 3. Hoofdfunctionaliteiten
-
-### 3.1 SEO Analyse
-```typescript
-// Voer basis SEO analyse uit
-const analysis = await seoService.analyzePage(url);
-```
-- On-page analyse
-- Technical SEO check
-- Content evaluatie
-- Mobile-friendly test
-
-### 3.2 Keyword Research
-```typescript
-// Start keyword research
-const keywords = await keywordService.researchKeywords({
-    seed: 'your keyword',
-    language: 'nl',
-    country: 'NL'
-});
-```
-- Keyword suggesties
-- Zoekvolume data
-- Competitie analyse
-- Long-tail variaties
-
-### 3.3 Content Optimalisatie
+#### 2.1 Content Optimalisatie
 ```typescript
 // Genereer geoptimaliseerde content
 const content = await contentService.generateContent({
     type: 'blog',
     keywords: ['keyword1', 'keyword2'],
-    tone: 'professional'
+    tone: 'professional',
+    length: 1500
 });
 ```
-- AI content generatie
-- SEO optimalisatie
-- Readability check
-- Meta tag generator
 
-### 3.4 Google Ads Management
+- AI-gedreven content creatie
+- SEO optimalisatie suggesties
+- Readability analyse
+- Meta tags generator
+- Schema.org markup
+
+#### 2.2 Keyword Research
+```typescript
+// Start keyword research
+const keywords = await keywordService.researchKeywords({
+    seed: 'your keyword',
+    language: 'nl',
+    country: 'NL',
+    difficulty: 'medium'
+});
+```
+
+- Keyword suggesties
+- Zoekvolume data
+- Competitie analyse
+- Long-tail variaties
+- Trending topics
+
+#### 2.3 Technische SEO
+- Site audit
+- Mobile-friendly check
+- Page speed optimalisatie
+- Structured data validatie
+- XML sitemap beheer
+
+### 3. SEA Management
+
+#### 3.1 Campagne Beheer
 ```typescript
 // Creëer nieuwe campagne
 const campaign = await adsService.createCampaign({
     name: 'Campaign Name',
     budget: 1000,
-    keywords: keywords
+    keywords: keywords,
+    targeting: {
+        location: 'Netherlands',
+        language: 'Dutch'
+    }
 });
 ```
-- Campagne creatie
-- Budget beheer
-- Bid optimalisatie
-- Performance tracking
 
-## 4. Best Practices
+- Campagne creatie wizard
+- Budget allocatie
+- A/B testing
+- Doelgroep targeting
+- Ad scheduling
 
-### 4.1 SEO Optimalisatie
+#### 3.2 Performance Tracking
+- Real-time metrics
+- ROI analyse
+- Conversie tracking
+- Custom rapportages
+- Competitie monitoring
+
+### 4. Analytics & Rapportage
+
+#### 4.1 Dashboard
+- KPI overzicht
+- Custom widgets
+- Data visualisatie
+- Export functionaliteit
+
+#### 4.2 Rapportages
+- SEO performance
+- SEA resultaten
+- Content effectiviteit
+- ROI analyses
+
+### 5. Integraties
+
+#### 5.1 Google Services
+- Google Analytics
+- Google Search Console
+- Google Ads
+- Google My Business
+
+#### 5.2 CMS Platforms
+- WordPress
+- WooCommerce
+- Shopify
+- Magento
+
+#### 5.3 Marketing Tools
+- Mailchimp
+- HubSpot
+- Salesforce
+- Zapier
+
+### 6. Best Practices
+
+#### 6.1 Content Strategie
 1. Begin met keyword research
-2. Focus op user intent
-3. Optimaliseer technische aspecten
-4. Monitor rankings
+2. Gebruik AI voor eerste versie
+3. Optimaliseer voor doelgroep
+4. Test en itereer
 
-### 4.2 Content Creatie
-1. Gebruik AI suggesties als basis
-2. Pas content aan voor doelgroep
-3. Optimaliseer voor featured snippets
-4. Test verschillende variaties
-
-### 4.3 Google Ads
+#### 6.2 SEA Optimalisatie
 1. Start met kleine budgetten
 2. Test verschillende ad copies
 3. Gebruik negative keywords
 4. Monitor ROAS
 
-## 5. Rapportage & Analytics
+## User Guide
 
-### 5.1 Dashboard
+### 1. Quick Start
+- [Installation & Setup](setup.md#installation)
+- [Initial Configuration](setup.md#configuration)
+- [Dashboard Overview](user-flow.md#dashboard)
+
+### 2. SEO Automation
+
+#### 2.1 Content Optimization
+```typescript
+// Generate optimized content
+const content = await contentService.generateContent({
+    type: 'blog',
+    keywords: ['keyword1', 'keyword2'],
+    tone: 'professional',
+    length: 1500
+});
+```
+
+- AI-driven content creation
+- SEO optimization suggestions
+- Readability analysis
+- Meta tags generator
+- Schema.org markup
+
+#### 2.2 Keyword Research
+```typescript
+// Start keyword research
+const keywords = await keywordService.researchKeywords({
+    seed: 'your keyword',
+    language: 'en',
+    country: 'US',
+    difficulty: 'medium'
+});
+```
+
+- Keyword suggestions
+- Search volume data
+- Competition analysis
+- Long-tail variations
+- Trending topics
+
+#### 2.3 Technical SEO
+- Site audit
+- Mobile-friendly check
+- Page speed optimization
+- Structured data validation
+- XML sitemap management
+
+### 3. SEA Management
+
+#### 3.1 Campaign Management
+```typescript
+// Create new campaign
+const campaign = await adsService.createCampaign({
+    name: 'Campaign Name',
+    budget: 1000,
+    keywords: keywords,
+    targeting: {
+        location: 'United States',
+        language: 'English'
+    }
+});
+```
+
+- Campaign creation wizard
+- Budget allocation
+- A/B testing
+- Target audience targeting
+- Ad scheduling
+
+#### 3.2 Performance Tracking
 - Real-time metrics
-- Historical data
-- Custom views
-- Export opties
+- ROI analysis
+- Conversion tracking
+- Custom reports
+- Competition monitoring
 
-### 5.2 KPI Tracking
-- Organic traffic
-- Conversies
-- ROAS
-- Rankings
+### 4. Analytics & Reporting
 
-## 6. Troubleshooting
+#### 4.1 Dashboard
+- KPI overview
+- Custom widgets
+- Data visualization
+- Export functionality
 
-### 6.1 Algemene Issues
-- Connectie problemen
-- API errors
-- Data synchronisatie
-- Performance issues
+#### 4.2 Reports
+- SEO performance
+- SEA results
+- Content effectiveness
+- ROI analyses
 
-### 6.2 Support
-- Email: support@ai-seo-sea.com
-- Documentatie: docs.ai-seo-sea.com
-- Community forum: forum.ai-seo-sea.com
+### 5. Integrations
 
-## 7. Security & Privacy
+#### 5.1 Google Services
+- Google Analytics
+- Google Search Console
+- Google Ads
+- Google My Business
 
-### 7.1 Data Beveiliging
-- SSL encryptie
-- 2FA authenticatie
-- API key management
-- Data backup
+#### 5.2 CMS Platforms
+- WordPress
+- WooCommerce
+- Shopify
+- Magento
 
-### 7.2 Privacy Settings
-- Data retention
-- Cookie management
-- GDPR compliance
-- Data export
+#### 5.3 Marketing Tools
+- Mailchimp
+- HubSpot
+- Salesforce
+- Zapier
 
-## 8. Updates & Onderhoud
+### 6. Best Practices
 
-### 8.1 Platform Updates
-- Feature releases
-- Security patches
-- API updates
-- UI improvements
+#### 6.1 Content Strategy
+1. Start with keyword research
+2. Use AI for initial version
+3. Optimize for target audience
+4. Test and iterate
 
-### 8.2 Maintenance Windows
-- Scheduled maintenance
-- Emergency updates
-- Version control
-- Rollback procedures
-
-## 9. Tips & Tricks
-
-### 9.1 Performance Optimalisatie
-1. Cache gebruik
-2. Bulk operaties
-3. API rate limiting
-4. Resource management
-
-### 9.2 Workflow Optimalisatie
-1. Templates gebruiken
-2. Keyboard shortcuts
-3. Batch processing
-4. Automated reporting
-
-## 10. Appendix
-
-### 10.1 Glossary
-- SEO terminologie
-- SEA begrippen
-- Technical terms
-- Metrics & KPIs
-
-### 10.2 API Reference
-- Endpoint documentatie
-- Authentication
-- Rate limits
-- Error codes
+#### 6.2 SEA Optimization
+1. Start with small budgets
+2. Test different ad copies
+3. Use negative keywords
+4. Monitor ROAS

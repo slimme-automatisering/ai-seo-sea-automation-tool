@@ -1,85 +1,371 @@
+# Frontend Documentatie
 # Frontend Documentation
 
-## 1. UI Framework
+[Nederlands](#frontend-architectuur) | [English](#frontend-architecture)
 
-- **Framework:** React.js
-  - React.js is chosen for its flexibility, component-based architecture, and strong ecosystem, making it ideal for building a progressive web app (PWA).
+## Frontend Architectuur
 
-## 2. UI Library
+### 1. Project Structuur
 
-- **Primary Library:** Material-UI (MUI)
-  - Material-UI provides a rich set of pre-built components following Google’s Material Design, ensuring a consistent and modern UI.
-- **Secondary Library:** Tailwind CSS
-  - Tailwind CSS will be used for utility-first styling, allowing for rapid custom designs and responsive layouts.
-- **Recommendation:** Use Material-UI for core components (e.g., buttons, modals, tables) and Tailwind CSS for custom styling and layout adjustments. This combination ensures both consistency and flexibility.
+```
+frontend/
+├── public/                     # Statische bestanden
+│   ├── assets/               # Media bestanden
+│   │   ├── images/         # Afbeeldingen
+│   │   └── icons/         # Iconen
+│   └── locales/          # Vertalingen
+├── src/
+│   ├── components/       # React componenten
+│   │   ├── common/      # Gedeelde UI componenten
+│   │   │   ├── inputs/  # Form inputs
+│   │   │   │   ├── Button/
+│   │   │   │   ├── Select/
+│   │   │   │   └── TextField/
+│   │   │   ├── feedback/ # Feedback componenten
+│   │   │   │   ├── Alert/
+│   │   │   │   ├── Modal/
+│   │   │   │   └── Toast/
+│   │   │   ├── data/    # Data weergave
+│   │   │   │   ├── Table/
+│   │   │   │   ├── Chart/
+│   │   │   │   └── Card/
+│   │   │   └── layout/  # Layout elementen
+│   │   │       ├── Box/
+│   │   │       ├── Grid/
+│   │   │       └── Stack/
+│   │   └── features/   # Feature modules
+│   │       ├── analytics/ # Analytics feature
+│   │       │   ├── CompetitorAnalysis/
+│   │       │   │   ├── CompetitorCard/
+│   │       │   │   ├── CompetitorChart/
+│   │       │   │   └── index.ts
+│   │       │   ├── PerformanceMetrics/
+│   │       │   │   ├── MetricsGrid/
+│   │       │   │   ├── MetricsChart/
+│   │       │   │   └── index.ts
+│   │       │   └── index.ts
+│   │       ├── seo/    # SEO feature
+│   │       │   ├── KeywordAnalysis/
+│   │       │   │   ├── KeywordTable/
+│   │       │   │   ├── RankingChart/
+│   │       │   │   └── index.ts
+│   │       │   ├── TechnicalSEO/
+│   │       │   │   ├── AuditResults/
+│   │       │   │   ├── IssuesList/
+│   │       │   │   └── index.ts
+│   │       │   └── index.ts
+│   │       └── sea/   # SEA feature
+│   │           ├── CampaignManager/
+│   │           │   ├── CampaignForm/
+│   │           │   ├── CampaignList/
+│   │           │   └── index.ts
+│   │           ├── AdCreator/
+│   │           │   ├── AdEditor/
+│   │           │   ├── AdPreview/
+│   │           │   └── index.ts
+│   │           └── index.ts
+│   ├── layouts/        # Pagina layouts
+│   │   ├── MainLayout/
+│   │   │   ├── Header/
+│   │   │   ├── Sidebar/
+│   │   │   ├── Footer/
+│   │   │   └── index.ts
+│   │   └── AuthLayout/
+│   │       └── index.ts
+│   ├── pages/         # Next.js pages
+│   │   ├── analytics/
+│   │   │   ├── competitors.tsx
+│   │   │   └── performance.tsx
+│   │   ├── seo/
+│   │   │   ├── keywords.tsx
+│   │   │   └── technical.tsx
+│   │   └── sea/
+│   │       ├── campaigns.tsx
+│   │       └── ads.tsx
+│   ├── hooks/        # Custom React hooks
+│   │   ├── analytics/
+│   │   │   ├── useCompetitorData.ts
+│   │   │   └── usePerformanceMetrics.ts
+│   │   ├── seo/
+│   │   │   ├── useKeywordRankings.ts
+│   │   │   └── useTechnicalAudit.ts
+│   │   └── sea/
+│   │       ├── useCampaigns.ts
+│   │       └── useAds.ts
+│   ├── services/    # API services
+│   │   ├── analytics.ts
+│   │   ├── seo.ts
+│   │   └── sea.ts
+│   ├── store/      # State management
+│   │   ├── analytics/
+│   │   │   ├── slice.ts
+│   │   │   └── selectors.ts
+│   │   ├── seo/
+│   │   │   ├── slice.ts
+│   │   │   └── selectors.ts
+│   │   └── sea/
+│   │       ├── slice.ts
+│   │       └── selectors.ts
+│   ├── styles/    # Styling
+│   │   ├── theme/
+│   │   │   ├── light.ts
+│   │   │   └── dark.ts
+│   │   └── global.css
+│   ├── types/    # TypeScript types
+│   │   ├── analytics.ts
+│   │   ├── seo.ts
+│   │   └── sea.ts
+│   └── utils/   # Utilities
+│       ├── api.ts
+│       ├── format.ts
+│       └── validation.ts
+├── tests/      # Test bestanden
+│   ├── unit/
+│   │   ├── components/
+│   │   └── hooks/
+│   └── e2e/
+│       ├── analytics/
+│       ├── seo/
+│       └── sea/
+├── .env
+├── next.config.js
+└── package.json
+```
 
-## 3. Navigation
+### 2. Componenten Architectuur
 
-- **Top Navigation Bar:** For primary sections (e.g., Dashboard, SEO, SEA, Reports).
-- **Side Menu:** For additional options and settings (e.g., user management, billing, integrations).
-- **Tabs:** For switching between related views (e.g., SEO vs. SEA, Campaigns vs. Analytics).
+#### 2.1 Common Components
+- **Inputs**: Formulier elementen
+- **Feedback**: Gebruikersfeedback componenten
+- **Data**: Data visualisatie componenten
+- **Layout**: Layout structuur componenten
 
-## 4. SEO Reports Component
-- **Componenten:**
-  - De componenten in deze map zijn specifiek gericht op SEO-rapportages en analyses.
-  - Bestanden zoals BacklinksOverview, KeywordPerformanceDetails, en TopKeywords zijn nu verplaatst naar de seo-reports map om duidelijkheid te bieden.
+#### 2.2 Feature Modules
+Elke feature module volgt dezelfde structuur:
+```
+feature/
+├── ComponentName/           # Hoofdcomponent
+│   ├── SubComponent/       # Sub-componenten
+│   │   ├── index.tsx      # Component implementatie
+│   │   ├── styles.ts      # Component-specifieke styles
+│   │   └── types.ts       # Component-specifieke types
+│   ├── hooks/             # Feature-specifieke hooks
+│   ├── utils/             # Feature-specifieke utilities
+│   └── index.ts           # Public API
+```
 
-## 5. Styling
+#### 2.3 Layouts
+- Consistente page layouts
+- Herbruikbare navigatie
+- Responsive design
+- Theme support
 
-- **Approach:** Styled Components
-  - Styled Components will be used for CSS-in-JS, enabling dynamic theming (e.g., night and day modes) and scoped styles for components.
+### 3. State Management
 
-## 6. Forms
+#### 3.1 Store Structuur
+```
+store/
+├── feature/
+│   ├── slice.ts           # Redux toolkit slice
+│   ├── selectors.ts       # State selectors
+│   ├── thunks.ts         # Async actions
+│   └── types.ts          # State types
+```
 
-- **Login/Sign-Up Forms:** For user authentication, including email/password and social login options.
-- **Campaign Creation Forms:** For setting up Google Ads campaigns, including ad copy, bidding parameters, and targeting options.
-- **Content Generation Forms:** For inputting content parameters (e.g., keywords, tone, length) for AI-generated content.
+### 4. Best Practices
 
-## 7. Dashboard Components
+#### 4.1 Component Guidelines
+- Atomic Design principes
+- Single Responsibility
+- Composition over inheritance
+- Props interface definitie
+- Error boundaries
+- Performance optimalisatie
+- Accessibility (WCAG)
 
-- **Charts and Graphs:** Built using Plotly and Apache ECharts for displaying analytics (e.g., ROI trends, CPC performance).
-- **Data Tables:** For showing raw data (e.g., keyword rankings, ad performance metrics).
-- **Cards:** For summarizing key metrics (e.g., ROI, CPC, traffic) in a visually appealing way.
+#### 4.2 State Management
+- Feature-based slices
+- Typed actions/reducers
+- Selector memoization
+- State normalisatie
 
-## 8. Responsive Design
+#### 4.3 Code Style
+- ESLint configuratie
+- Prettier formatting
+- Import ordering
+- Named exports
+- JSDoc documentatie
 
-- **Breakpoints:** Specific breakpoints will be defined for mobile, tablet, and desktop devices to ensure optimal responsiveness.
-- **Touch Optimization:** No specific requirements for now, but the design will be touch-friendly by default.
+## Frontend Architecture
 
-## 9. Theming
+### 1. Project Structure
 
-- **Dynamic Theming:** Support for switching between night and day modes.
-- **Branding Guidelines:** Not defined yet, but the theming system will be flexible to accommodate future branding requirements.
+```
+frontend/
+├── public/                     # Static files
+├── src/
+│   ├── components/            # Reusable components
+│   │   ├── common/           # Common components
+│   │   │   ├── inputs/      # Form inputs
+│   │   │   │   ├── Button/
+│   │   │   │   ├── Select/
+│   │   │   │   └── TextField/
+│   │   │   ├── feedback/    # Feedback components
+│   │   │   │   ├── Alert/
+│   │   │   │   ├── Modal/
+│   │   │   │   └── Toast/
+│   │   │   ├── data/        # Data visualization
+│   │   │   │   ├── Table/
+│   │   │   │   ├── Chart/
+│   │   │   │   └── Card/
+│   │   │   └── layout/      # Layout elements
+│   │   │       ├── Box/
+│   │   │       ├── Grid/
+│   │   │       └── Stack/
+│   │   └── features/       # Feature modules
+│   │       ├── analytics/  # Analytics feature
+│   │       │   ├── CompetitorAnalysis/
+│   │       │   │   ├── CompetitorCard/
+│   │       │   │   ├── CompetitorChart/
+│   │       │   │   └── index.ts
+│   │       │   ├── PerformanceMetrics/
+│   │       │   │   ├── MetricsGrid/
+│   │       │   │   ├── MetricsChart/
+│   │       │   │   └── index.ts
+│   │       │   └── index.ts
+│   │       ├── seo/        # SEO feature
+│   │       │   ├── KeywordAnalysis/
+│   │       │   │   ├── KeywordTable/
+│   │       │   │   ├── RankingChart/
+│   │       │   │   └── index.ts
+│   │       │   ├── TechnicalSEO/
+│   │       │   │   ├── AuditResults/
+│   │       │   │   ├── IssuesList/
+│   │       │   │   └── index.ts
+│   │       │   └── index.ts
+│   │       └── sea/        # SEA feature
+│   │           ├── CampaignManager/
+│   │           │   ├── CampaignForm/
+│   │           │   ├── CampaignList/
+│   │           │   └── index.ts
+│   │           ├── AdCreator/
+│   │           │   ├── AdEditor/
+│   │           │   ├── AdPreview/
+│   │           │   └── index.ts
+│   │           └── index.ts
+│   ├── layouts/        # Page layouts
+│   │   ├── MainLayout/
+│   │   │   ├── Header/
+│   │   │   ├── Sidebar/
+│   │   │   ├── Footer/
+│   │   │   └── index.ts
+│   │   └── AuthLayout/
+│   │       └── index.ts
+│   ├── pages/         # Next.js pages
+│   │   ├── analytics/
+│   │   │   ├── competitors.tsx
+│   │   │   └── performance.tsx
+│   │   ├── seo/
+│   │   │   ├── keywords.tsx
+│   │   │   └── technical.tsx
+│   │   └── sea/
+│   │       ├── campaigns.tsx
+│   │       └── ads.tsx
+│   ├── hooks/        # Custom React hooks
+│   │   ├── analytics/
+│   │   │   ├── useCompetitorData.ts
+│   │   │   └── usePerformanceMetrics.ts
+│   │   ├── seo/
+│   │   │   ├── useKeywordRankings.ts
+│   │   │   └── useTechnicalAudit.ts
+│   │   └── sea/
+│   │       ├── useCampaigns.ts
+│   │       └── useAds.ts
+│   ├── services/    # API services
+│   │   ├── analytics.ts
+│   │   ├── seo.ts
+│   │   └── sea.ts
+│   ├── store/      # State management
+│   │   ├── analytics/
+│   │   │   ├── slice.ts
+│   │   │   └── selectors.ts
+│   │   ├── seo/
+│   │   │   ├── slice.ts
+│   │   │   └── selectors.ts
+│   │   └── sea/
+│   │       ├── slice.ts
+│   │       └── selectors.ts
+│   ├── styles/    # Styling
+│   │   ├── theme/
+│   │   │   ├── light.ts
+│   │   │   └── dark.ts
+│   │   └── global.css
+│   ├── types/    # TypeScript types
+│   │   ├── analytics.ts
+│   │   ├── seo.ts
+│   │   └── sea.ts
+│   └── utils/   # Utilities
+│       ├── api.ts
+│       ├── format.ts
+│       └── validation.ts
+├── tests/      # Test files
+│   ├── unit/
+│   │   ├── components/
+│   │   └── hooks/
+│   └── e2e/
+│       ├── analytics/
+│       ├── seo/
+│       └── sea/
+├── .env
+├── next.config.js
+└── package.json
+```
 
-## 10. State Management
+### 2. Component Architecture
 
-- **Global State Management:** Redux
-  - Redux will be used for predictable state management across the app.
-- **Database-Based State Management:** MongoDB
-  - MongoDB will store persistent state data (e.g., user preferences, campaign settings).
-- **Caching:** Redis
-  - Redis will be used for caching frequently accessed data (e.g., analytics, competitor data) to improve performance.
+#### 2.1 Component Organization
+- **Common Components:** Reusable UI elements
+  - Atomic design principles
+  - Consistent styling
+  - Shared functionality
 
-## 11. Performance Optimization
+- **Feature Components:** Feature-specific logic
+  - Self-contained features
+  - Own state management
+  - Isolated business logic
 
-- **Lazy Loading:** Components will be loaded only when needed (e.g., charts and tables when the user navigates to the analytics section).
-- **Code Splitting:** The app will be split into smaller bundles to reduce initial load time.
-- **Caching:** Frequently accessed data will be cached using Redis for faster retrieval.
+- **Layout Components:** Application structure
+  - Consistent navigation
+  - Responsive design
+  - Theme integration
 
-├── frontend/
-│ ├── public/ # Static assets (e.g., images, favicon)
-│ ├── src/
-│ │ ├── components/ # Reusable UI components (e.g., buttons, cards)
-│ │ ├── pages/ # Page components (e.g., Dashboard, SEO, SEA)
-│ │ ├── styles/ # Global styles and themes
-│ │ ├── utils/ # Utility functions (e.g., API calls, form validation)
-│ │ ├── store/ # Redux store and slices
-│ │ ├── hooks/ # Custom React hooks
-│ │ └── types/ # TypeScript type definitions
-│ ├── tests/ # Test files (e.g., unit tests, integration tests)
-│ ├── server.ts # Server entry point
-│ ├── App.tsx # Main app component
-│ ├── index.tsx # Entry point
-│ ├── .env # Environment variables
-│ ├── package.json # Dependencies and scripts
-│ ├── tsconfig.json # TypeScript configuratie
+#### 2.2 Component Best Practices
+- Use of TypeScript
+- Strict props typing
+- Error boundaries
+- Performance optimization
+- Accessibility (WCAG)
+
+### 3. State Management
+
+#### 3.1 Redux Store
+- Feature-based slices
+- Typed actions/reducers
+- Middleware configuration
+
+#### 3.2 React Query
+- API data caching
+- Optimistic updates
+- Real-time sync
+
+### 4. Routing & Navigation
+- Next.js page routing
+- Dynamic routes
+- Route guards
+- SEO optimization
+
+### 5. Testing Strategy
+- Jest unit tests
+- React Testing Library
+- Cypress E2E tests
+- Performance testing

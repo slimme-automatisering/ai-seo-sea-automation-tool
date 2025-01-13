@@ -37,172 +37,209 @@ ai-seo-sea-automation-tool/
 │   ├── package.json                # Dependencies and scripts
 │   ├── tsconfig.json               # TypeScript configuratie
 ├── frontend/
-│   ├── public/                     # Static assets (e.g., images, favicon)
+│   ├── public/                     # Statische bestanden
+│   │   ├── assets/               # Media bestanden
+│   │   │   ├── images/         # Afbeeldingen
+│   │   │   └── icons/         # Iconen
+│   │   └── locales/          # Vertalingen
 │   ├── src/
-│   │   ├── components/
-│   │   │   ├── dashboard/
-│   │   │   │   ├── seo-reports/          # Bevat componenten voor SEO-rapportages
-│   │   │   │   │   ├── BacklinksOverview.tsx
-│   │   │   │   │   ├── KeywordPerformanceDetails.tsx
-│   │   │   │   │   ├── KeywordRankings.tsx
-│   │   │   │   │   ├── SearchAnalytics.tsx
-│   │   │   │   │   ├── SEOOverview.tsx
-│   │   │   │   │   ├── SEOSettings.tsx
-│   │   │   │   │   ├── TechnicalSEOStatus.tsx
-│   │   │   │   │   └── TopKeywords.tsx
-│   │   ├── pages/                  # Page components (e.g., Dashboard, SEO, SEA)
-│   │   ├── styles/                 # Global styles and themes
-│   │   ├── utils/                  # Utility functions (e.g., API calls, form validation)
-│   │   ├── store/                  # Redux store and slices
-│   │   ├── hooks/                  # Custom React hooks
-│   │   └── types/                  # TypeScript type definitions
-│   ├── tests/                      # Test files (e.g., unit tests, integration tests)
-│   ├── server.ts                   # Server entry point
-│   ├── App.tsx                     # Main app component
-│   ├── index.tsx                   # Entry point
-│   ├── .env                        # Environment variables
-│   ├── package.json                # Dependencies and scripts
-│   ├── tsconfig.json               # TypeScript configuratie
+│   │   ├── components/       # React componenten
+│   │   │   ├── common/      # Gedeelde UI componenten
+│   │   │   │   ├── inputs/  # Form inputs
+│   │   │   │   │   ├── Button/
+│   │   │   │   │   ├── Select/
+│   │   │   │   │   └── TextField/
+│   │   │   │   ├── feedback/ # Feedback componenten
+│   │   │   │   │   ├── Alert/
+│   │   │   │   │   ├── Modal/
+│   │   │   │   │   └── Toast/
+│   │   │   │   ├── data/    # Data weergave
+│   │   │   │   │   ├── Table/
+│   │   │   │   │   ├── Chart/
+│   │   │   │   │   └── Card/
+│   │   │   │   └── layout/  # Layout elementen
+│   │   │   │       ├── Box/
+│   │   │   │       ├── Grid/
+│   │   │   │       └── Stack/
+│   │   │   └── features/   # Feature modules
+│   │   │       ├── analytics/ # Analytics feature
+│   │   │       ├── seo/      # SEO feature
+│   │   │       └── sea/      # SEA feature
+│   │   ├── layouts/        # Pagina layouts
+│   │   │   ├── MainLayout/
+│   │   │   └── AuthLayout/
+│   │   ├── pages/         # Next.js pages
+│   │   ├── hooks/        # Custom React hooks
+│   │   ├── services/    # API services
+│   │   ├── store/      # State management
+│   │   ├── styles/    # Styling
+│   │   ├── types/    # TypeScript types
+│   │   └── utils/   # Utilities
+│   └── tests/      # Test bestanden
 ├── README.md                       # Project overview and setup instructions
 ├── .windsurfrules                  # Windsurf AI Assistant regels
 ├── ai-seo-sea-automation-tool.code-workspace # VS Code workspace configuratie
 
-
 # Project Bestandsstructuur
 
-## Traditionele weergave
-project-root/
-├── .github/
-│   └── workflows/
-│       └── ci.yml
-├── docs/
-│   ├── api.md
-│   ├── setup.md
-│   └── ...
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── dashboard/
-│   │   │   │   ├── seo-reports/          # Bevat componenten voor SEO-rapportages
-│   │   │   │   │   ├── BacklinksOverview.tsx
-│   │   │   │   │   ├── KeywordPerformanceDetails.tsx
-│   │   │   │   │   ├── KeywordRankings.tsx
-│   │   │   │   │   ├── SearchAnalytics.tsx
-│   │   │   │   │   ├── SEOOverview.tsx
-│   │   │   │   │   ├── SEOSettings.tsx
-│   │   │   │   │   ├── TechnicalSEOStatus.tsx
-│   │   │   │   │   └── TopKeywords.tsx
-│   │   ├── pages/
-│   └── package.json
-├── backend/
-│   ├── src/
-│   │   ├── controllers/
-│   │   ├── models/
-│   │   └── ...
-│   └── package.json
-└── README.md
+## 1. Root Structuur
 
-## Mermaid Top-Down weergave
-```mermaid
-graph TD
-    Root[ai-seo-sea-automation-tool]
-    Root --> Github[.github]
-    Root --> Docs[docs]
-    Root --> Frontend[frontend]
-    Root --> Backend[backend]
-    Root --> README[README.md]
-    Root --> Workspace[.code-workspace]
-    Root --> Rules[.windsurfrules]
-
-    Github --> Workflows[workflows]
-    Workflows --> CICD[ci.yml]
-
-    Docs --> PRD[prd.md]
-    Docs --> FrontDoc[frontend.md]
-    Docs --> BackDoc[backend.md]
-    Docs --> LibDoc[third-party-libraries.md]
-    Docs --> DevDoc[devops.md]
-    Docs --> TestDoc[testing-plan.md]
-    Docs --> SecDoc[security-plan.md]
-    Docs --> FlowDoc[user-flow.md]
-    Docs --> CodeDoc[code-documentation.md]
-    Docs --> DBDoc[database-schema.md]
-    Docs --> StateDoc[state-management.md]
-    Docs --> PerfDoc[performance-optimization.md]
-    Docs --> ApiDoc[api.md]
-
-    Backend --> BackConfig[config]
-    Backend --> BackControllers[controllers]
-    Backend --> BackModels[models]
-    Backend --> BackRoutes[routes]
-    Backend --> BackServices[services]
-    Backend --> BackUtils[utils]
-    Backend --> BackMiddleware[middleware]
-    Backend --> BackTests[tests]
-    Backend --> BackTypes[types]
-    Backend --> BackPrisma[prisma]
-    Backend --> BackServer[server.ts]
-    Backend --> BackDocker[Dockerfile.dev]
-    Backend --> BackEnv[.env]
-    Backend --> BackPackage[package.json]
-    Backend --> BackTS[tsconfig.json]
-
-    Frontend --> FrontPublic[public]
-    Frontend --> FrontSrc[src]
-    Frontend --> FrontEnv[.env]
-    Frontend --> FrontPackage[package.json]
-    Frontend --> FrontTS[tsconfig.json]
-
-    FrontSrc --> Components[components]
-    FrontSrc --> Pages[pages]
-    FrontSrc --> Styles[styles]
-    FrontSrc --> Utils[utils]
-    FrontSrc --> Store[store]
-    FrontSrc --> Hooks[hooks]
-    FrontSrc --> Types[types]
-    FrontSrc --> App[App.tsx]
-    FrontSrc --> Index[index.tsx]
-````
-
-## Mermaid Left-Right weergave
-
-```mermaid
-graph LR
-    Root[ai-seo-sea-automation-tool]
-    Root --> Config[Configuration]
-    Root --> FE[Frontend]
-    Root --> BE[Backend]
-    Root --> Docs[Documentation]
-
-    Config --> GH[.github/workflows]
-    Config --> WS[.code-workspace]
-    Config --> Rules[.windsurfrules]
-
-    Docs --> API[API Docs]
-    Docs --> Setup[Setup Docs]
-    Docs --> Security[Security Docs]
-    Docs --> Performance[Performance Docs]
-
-    FE --> UI[UI Components]
-    FE --> State[State Management]
-    FE --> Pages[Pages]
-    FE --> Hooks[Custom Hooks]
-    FE --> Types[TypeScript Types]
-
-    BE --> Controllers[Controllers]
-    BE --> Services[Services]
-    BE --> Models[Data Models]
-    BE --> Routes[API Routes]
-    BE --> MW[Middleware]
-    BE --> Utils[Utilities]
-    BE --> Types2[TypeScript Types]
-    BE --> Prisma[Database ORM]
+```
+ai-seo-sea-automation-tool/
+├── .github/                    # GitHub configuratie
+│   └── workflows/             # CI/CD workflows
+├── docs/                      # Projectdocumentatie
+│   ├── api/                  # API documentatie
+│   │   ├── endpoints.md     # API endpoints
+│   │   └── models.md       # Data models
+│   ├── architecture/       # Architectuur docs
+│   │   ├── frontend.md    # Frontend architectuur
+│   │   └── backend.md    # Backend architectuur
+│   ├── deployment/      # Deployment docs
+│   │   ├── setup.md    # Setup instructies
+│   │   └── devops.md  # DevOps procedures
+│   └── development/   # Development docs
+│       ├── guidelines.md   # Coding guidelines
+│       └── workflow.md    # Development workflow
+├── backend/               # Backend applicatie
+├── frontend/             # Frontend applicatie
+├── scripts/             # Hulpscripts
+│   ├── setup/         # Setup scripts
+│   └── deployment/   # Deployment scripts
+└── shared/           # Gedeelde resources
+    ├── types/       # TypeScript types
+    └── config/     # Configuraties
 ```
 
-De drie verschillende weergaves bieden elk hun eigen voordelen:
+## 2. Backend Structuur
 
-1. **Mermaid Tree View**: Geeft een complete hiërarchische weergave van alle bestanden en mappen, ideaal voor het begrijpen van de volledige structuur.
+```
+backend/
+├── src/
+│   ├── config/                # Configuratie
+│   │   ├── database.ts       # Database config
+│   │   ├── cache.ts         # Cache config
+│   │   └── auth.ts         # Auth config
+│   ├── controllers/        # Request handlers
+│   │   ├── analytics/     # Analytics controllers
+│   │   ├── auth/         # Auth controllers
+│   │   ├── seo/         # SEO controllers
+│   │   └── sea/        # SEA controllers
+│   ├── services/       # Business logic
+│   │   ├── analytics/ # Analytics services
+│   │   ├── auth/     # Auth services
+│   │   ├── seo/     # SEO services
+│   │   └── sea/    # SEA services
+│   ├── models/    # Database models
+│   ├── routes/   # API routes
+│   ├── utils/   # Utilities
+│   └── types/  # TypeScript types
+├── tests/     # Test bestanden
+└── prisma/   # Database schema
+```
 
-2. **Traditionele Weergave**: Een klassieke directory tree weergave die het makkelijkst te kopiëren en te volgen is voor ontwikkelaars.
+## 3. Frontend Structuur
 
-3. **Mermaid Component Diagram**: Focust op de relaties tussen verschillende componenten en modules, handig voor het begrijpen van de architectuur.
+```
+frontend/
+├── public/                     # Statische bestanden
+│   ├── assets/               # Media bestanden
+│   │   ├── images/         # Afbeeldingen
+│   │   └── icons/         # Iconen
+│   └── locales/          # Vertalingen
+├── src/
+│   ├── components/       # React componenten
+│   │   ├── common/      # Gedeelde UI componenten
+│   │   │   ├── inputs/  # Form inputs
+│   │   │   │   ├── Button/
+│   │   │   │   ├── Select/
+│   │   │   │   └── TextField/
+│   │   │   ├── feedback/ # Feedback componenten
+│   │   │   │   ├── Alert/
+│   │   │   │   ├── Modal/
+│   │   │   │   └── Toast/
+│   │   │   ├── data/    # Data weergave
+│   │   │   │   ├── Table/
+│   │   │   │   ├── Chart/
+│   │   │   │   └── Card/
+│   │   │   └── layout/  # Layout elementen
+│   │   │       ├── Box/
+│   │   │       ├── Grid/
+│   │   │       └── Stack/
+│   │   └── features/   # Feature modules
+│   │       ├── analytics/ # Analytics feature
+│   │       ├── seo/      # SEO feature
+│   │       └── sea/      # SEA feature
+│   ├── layouts/        # Pagina layouts
+│   │   ├── MainLayout/
+│   │   └── AuthLayout/
+│   ├── pages/         # Next.js pages
+│   ├── hooks/        # Custom React hooks
+│   ├── services/    # API services
+│   ├── store/      # State management
+│   ├── styles/    # Styling
+│   ├── types/    # TypeScript types
+│   └── utils/   # Utilities
+└── tests/      # Test bestanden
+```
+
+## 4. Shared Resources
+
+```
+shared/
+├── types/              # Gedeelde types
+│   ├── analytics.ts   # Analytics types
+│   ├── auth.ts       # Auth types
+│   └── models.ts    # Data model types
+└── config/         # Gedeelde config
+    ├── api.ts     # API config
+    └── env.ts    # Env variables
+```
+
+## 5. Development Workflow
+
+### 5.1 Branch Structuur
+```
+main
+├── develop
+│   ├── feature/analytics
+│   ├── feature/auth
+│   ├── feature/seo
+│   └── feature/sea
+└── release
+```
+
+### 5.2 Deployment Stages
+```
+development → staging → production
+```
+
+## 6. Best Practices
+
+### 6.1 Naamgeving
+- Gebruik descriptieve, consistente namen
+- PascalCase voor componenten
+- camelCase voor functies/variabelen
+- kebab-case voor bestanden/mappen
+
+### 6.2 Code Organisatie
+- Feature-based structuur
+- Modulaire opbouw
+- Duidelijke scheiding van concerns
+- Herbruikbare componenten
+
+### 6.3 Documentatie
+- Up-to-date README's
+- JSDoc comments
+- API documentatie
+- Architectuur diagrammen
+
+### 6.4 Component Structuur
+```
+ComponentName/
+├── index.tsx      # Component implementatie
+├── styles.ts     # Component-specifieke styles
+├── types.ts     # Component-specifieke types
+├── utils.ts    # Component-specifieke utilities
+└── tests/     # Component tests
+```

@@ -101,12 +101,85 @@ pre_action_checks:
       - "docs/todo.md"
       - "docs/changelog.md"
 
+# Documentatie regels
+documentation_rules:
+  requirements:
+    - rule: "all_changes_must_be_documented"
+      enforce: true
+    - rule: "update_relevant_docs"
+      enforce: true
+    - rule: "maintain_version_history"
+      enforce: true
+    - rule: "create_placeholders"  # Nieuwe regel
+      enforce: true
+      description: "Maak placeholders voor ontbrekende bestanden en functies"
+      steps:
+        - "Identificeer ontbrekende bestanden/functies in referenties"
+        - "Maak placeholder bestanden met TODO markers"
+        - "Documenteer vereiste functionaliteit"
+        - "Voeg codevoorbeelden of interfaces toe"
+        - "Link placeholder naar gerelateerde documentatie"
+  
+  placeholder_template:  # Nieuwe sectie
+    file:
+      header: |
+        # [Bestandsnaam] - TODO
+        # [Filename] - TODO
+
+        [Nederlands](#nederlands) | [English](#english)
+
+        ## Nederlands
+        Dit bestand is een placeholder en moet nog worden geïmplementeerd.
+
+        ### Functionaliteit
+        [Beschrijf hier de beoogde functionaliteit]
+
+        ### Vereisten
+        - Requirement 1
+        - Requirement 2
+
+        ### Code Voorbeeld
+        ```[taal]
+        // Voorbeeldcode of interface
+        ```
+
+        ## English
+        This file is a placeholder and needs to be implemented.
+    
+    function:
+      header: |
+        /**
+         * TODO: Implement [FunctionName]
+         * 
+         * @description
+         * [Beschrijf hier de beoogde functionaliteit]
+         * 
+         * @params
+         * - param1: Type - Description
+         * - param2: Type - Description
+         * 
+         * @returns
+         * - ReturnType - Description
+         * 
+         * @example
+         * ```[taal]
+         * // Voorbeeldcode
+         * ```
+         */
+  
+  validation:
+    - check_broken_links: true
+    - verify_formatting: true
+    - ensure_consistency: true
+    - verify_placeholders: true  # Nieuwe validatie
+
 # Post-actie documentatie updates
 post_action_updates:
   required:
     - "docs/setup.md"
     - "docs/todo.md"
     - "docs/changelog.md"
+    - "docs/placeholders.md"  # Nieuwe verplichte update
   
   verify:
     - ".windsurfrules"
@@ -125,23 +198,9 @@ suggestions_workflow:
       - "docs/todo.md"
       - "docs/changelog.md"
       - "docs/suggestions.md"
+      - "docs/placeholders.md"  # Toegevoegd aan updates
     verify:
       - ".windsurfrules"
-
-# Documentatie regels
-documentation_rules:
-  requirements:
-    - rule: "all_changes_must_be_documented"
-      enforce: true
-    - rule: "update_relevant_docs"
-      enforce: true
-    - rule: "maintain_version_history"
-      enforce: true
-  
-  validation:
-    - check_broken_links: true
-    - verify_formatting: true
-    - ensure_consistency: true
 
 # Automatische validaties
 validations:
@@ -149,10 +208,12 @@ validations:
     - markdown_lint
     - broken_links
     - formatting
+    - placeholder_check  # Nieuwe validatie
   
   post_commit:
     - documentation_coverage
     - version_consistency
+    - placeholder_status  # Nieuwe validatie
 
 # Automatische commit configuratie
 git_automation:
@@ -167,6 +228,7 @@ git_automation:
       - "refactor"# Code herstructurering
       - "test"    # Test toevoegingen/updates
       - "style"   # Code style updates
+      - "placeholder" # Nieuwe type voor placeholders
     
     scopes:
       - "setup"   # Setup documentatie
@@ -177,6 +239,7 @@ git_automation:
       - "api"     # API documentatie
       - "frontend"# Frontend documentatie
       - "backend" # Backend documentatie
+      - "placeholder" # Nieuwe scope voor placeholders
     
     auto_generate:
       rules:
@@ -190,6 +253,8 @@ git_automation:
           template: "[feat] suggest: {new_suggestions}"
         - when: "changelog.md"
           template: "[docs] changelog: Update for version {version}"
+        - when: "placeholder"
+          template: "[placeholder] {type}: Created placeholder for {name}"
       
       variables:
         summary_length: 72  # Maximum lengte van commit message
@@ -201,17 +266,10 @@ git_automation:
         - validate_message_format
         - check_branch_naming
         - verify_ticket_references
+        - verify_placeholders  # Nieuwe hook
       
       post_commit:
         - update_changelog
         - notify_reviewers
         - update_documentation_index
-
-  branch_automation:
-    naming_convention: "{type}/{ticket}-{description}"
-    auto_branch: true
-    auto_merge_conditions:
-      - all_checks_passed
-      - approved_by_reviewer
-      - no_conflicts
-      - documentation_updated
+        - update_placeholders_status  # Nieuwe hook

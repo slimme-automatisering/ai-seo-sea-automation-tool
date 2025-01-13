@@ -2,30 +2,32 @@
   "folders": [
     {
       "path": ".",
-      "name": "AI SEO/SEA Tool"
-    }
+      "name": "AI SEO/SEA Tool",
+    },
   ],
   "settings": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "explicit"
+      "source.fixAll.eslint": "explicit",
     },
     "[typescript]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
     },
     "[javascript]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
     },
     "files.exclude": {
       "**/.git": true,
       "**/.DS_Store": true,
       "**/node_modules": true,
       "**/dist": true,
-      "**/.next": true
+      "**/.next": true,
     },
     "typescript.tsdk": "node_modules/typescript/lib",
-    "jest.autoRun": "off"
+    "jest.autoRun": "off",
+    "commentTranslate.targetLanguage": "nl",
+    "commentTranslate.hover.enabled": true,
   },
   "extensions": {
     "recommendations": [
@@ -34,7 +36,7 @@
       "prisma.prisma",
       "ms-azuretools.vscode-docker",
       "mikestead.dotenv",
-      "github.copilot"
-    ]
-  }
+      "github.copilot",
+    ],
+  },
 }
